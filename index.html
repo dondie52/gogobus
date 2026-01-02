@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1B4D4A">
+    <meta name="description" content="GOGOBUS - Safe and Comfortable Travel to Your Destination">
+    <title>GOGOBUS - Bus Booking</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/onboarding.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Splash Screen -->
+        <div id="splash-screen" class="screen active">
+            <div class="splash-content">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="8" y="20" width="6" height="25" rx="3" fill="#F5A623"/>
+                            <rect x="18" y="12" width="6" height="33" rx="3" fill="#F5A623"/>
+                            <rect x="28" y="8" width="6" height="37" rx="3" fill="#F5A623"/>
+                            <rect x="38" y="15" width="6" height="30" rx="3" fill="#F5A623"/>
+                            <rect x="48" y="22" width="6" height="23" rx="3" fill="#F5A623"/>
+                        </svg>
+                    </div>
+                    <h1 class="logo-text">GOGOBUS</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onboarding Screen 1 -->
+        <div id="onboarding-1" class="screen onboarding-screen">
+            <div class="onboarding-content">
+                <div class="onboarding-illustration">
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <span class="ticket-label">Ticket</span>
+                            <span class="ticket-status">Active</span>
+                        </div>
+                        <div class="ticket-route">
+                            <div class="route-point">
+                                <span class="city">Medan</span>
+                                <span class="time">08:00</span>
+                            </div>
+                            <div class="route-line">
+                                <span class="route-icon">→</span>
+                                <span class="via">Via Tol Raya</span>
+                            </div>
+                            <div class="route-point">
+                                <span class="city">Yogyakarta</span>
+                                <span class="time">14:30</span>
+                            </div>
+                        </div>
+                        <div class="ticket-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Passenger</span>
+                                <span class="detail-value">Aruna Dahlia</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Date</span>
+                                <span class="detail-value">24 Oct 2024</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Seat</span>
+                                <span class="detail-value">12A</span>
+                            </div>
+                        </div>
+                        <div class="ticket-barcode">
+                            <div class="barcode-lines"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="onboarding-text">
+                    <h2>Get bus tickets from anywhere without hassle</h2>
+                    <p>Just browse through GOGOBUS and get tickets without the hassle of coming to our agents</p>
+                </div>
+                <div class="onboarding-indicators">
+                    <span class="indicator active"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                </div>
+                <button class="btn-primary" onclick="goToScreen('onboarding-2')">Get Started</button>
+                <p class="register-link">Don't have an account? <a href="#" onclick="goToScreen('login')">Register Account</a></p>
+            </div>
+        </div>
+
+        <!-- Onboarding Screen 2 -->
+        <div id="onboarding-2" class="screen onboarding-screen">
+            <div class="onboarding-content">
+                <div class="onboarding-illustration">
+                    <div class="bonus-card">
+                        <div class="bonus-header">
+                            <div class="bonus-icon">🎁</div>
+                            <span class="bonus-label">Account</span>
+                            <span class="bonus-tag">Bonuses</span>
+                        </div>
+                        <div class="bonus-points">
+                            <span class="points-icon">⭐</span>
+                            <span class="points-value">850 pt</span>
+                        </div>
+                        <div class="bonus-promo">
+                            <div class="promo-image">
+                                <div class="coffee-cup">☕</div>
+                            </div>
+                            <div class="promo-details">
+                                <span class="promo-brand">GOGOBUS Coffee Latte</span>
+                                <span class="promo-terms">Terms & Conditions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="onboarding-text">
+                    <h2>Get a bonus on every ticket purchase transaction</h2>
+                    <p>Collect points earned from each ticket purchase and redeem them for reward vouchers</p>
+                </div>
+                <div class="onboarding-indicators">
+                    <span class="indicator"></span>
+                    <span class="indicator active"></span>
+                    <span class="indicator"></span>
+                </div>
+                <button class="btn-primary" onclick="goToScreen('onboarding-3')">Get Started</button>
+                <p class="register-link">Don't have an account? <a href="#" onclick="goToScreen('login')">Register Account</a></p>
+            </div>
+        </div>
+
+        <!-- Onboarding Screen 3 -->
+        <div id="onboarding-3" class="screen onboarding-screen">
+            <div class="onboarding-content">
+                <div class="onboarding-illustration">
+                    <div class="tracking-card">
+                        <div class="tracking-header">
+                            <span class="tracking-label">Current Location</span>
+                            <span class="tracking-live">🔴 LIVE</span>
+                        </div>
+                        <div class="tracking-location">
+                            <div class="location-icon">📍</div>
+                            <span class="location-name">Harmoniyas Terminal, Ngavi, East Java</span>
+                        </div>
+                        <div class="tracking-next">
+                            <span class="next-label">Next Stop</span>
+                            <div class="next-info">
+                                <div class="next-icon">🍽️</div>
+                                <div class="next-details">
+                                    <span class="next-name">88 Ngavi Restaurant</span>
+                                    <span class="next-desc">Will begin Bus Terminal Break in 00:15:27</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tracking-map">
+                            <div class="map-placeholder">
+                                <div class="map-route"></div>
+                                <div class="map-marker current"></div>
+                                <div class="map-marker destination"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="onboarding-text">
+                    <h2>Easily track your current location & trip statuses</h2>
+                    <p>No need to worry about missing your destination. We provide a Live Tracking feature</p>
+                </div>
+                <div class="onboarding-indicators">
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator active"></span>
+                </div>
+                <button class="btn-primary" onclick="goToScreen('get-started')">Get Started</button>
+                <p class="register-link">Don't have an account? <a href="#" onclick="goToScreen('login')">Register Account</a></p>
+            </div>
+        </div>
+
+        <!-- Get Started / Login Screen -->
+        <div id="get-started" class="screen get-started-screen">
+            <div class="get-started-content">
+                <div class="get-started-header">
+                    <div class="logo-small">
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="12" width="4" height="18" rx="2" fill="#F5A623"/>
+                            <rect x="11" y="7" width="4" height="23" rx="2" fill="#F5A623"/>
+                            <rect x="18" y="4" width="4" height="26" rx="2" fill="#F5A623"/>
+                            <rect x="25" y="9" width="4" height="21" rx="2" fill="#F5A623"/>
+                            <rect x="32" y="14" width="4" height="16" rx="2" fill="#F5A623"/>
+                        </svg>
+                        <span>GOGOBUS</span>
+                    </div>
+                </div>
+                <div class="get-started-hero">
+                    <h1>Safe and Comfortable Travel to Your Destination <span class="emoji">✨</span></h1>
+                    <p>Anytime at your comfort doorstep, at your comfort price</p>
+                </div>
+                <div class="get-started-image">
+                    <div class="bus-illustration">
+                        <div class="bus-stop">
+                            <span class="stop-name">Harmoniyas Terminal, Ngavi, East Java</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-primary btn-login" onclick="goToScreen('login')">Login</button>
+                <div class="social-login">
+                    <span class="divider-text">or log in using</span>
+                    <div class="social-buttons">
+                        <button class="social-btn google" aria-label="Login with Google">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                        </button>
+                        <button class="social-btn facebook" aria-label="Login with Facebook">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </button>
+                        <button class="social-btn apple" aria-label="Login with Apple">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="#000000" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                            </svg>
+                        </button>
+                        <button class="social-btn email" aria-label="Login with Email">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="#F5A623" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Screen (placeholder for next phase) -->
+        <div id="login" class="screen">
+            <div class="placeholder-content">
+                <h2>Login Screen</h2>
+                <p>Authentication will be implemented in the next phase with Supabase</p>
+                <button class="btn-secondary" onclick="goToScreen('get-started')">← Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
