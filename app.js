@@ -8,7 +8,7 @@
 // ===================
 const App = {
     currentScreen: 'splash-screen',
-    screens: ['splash-screen', 'onboarding-1', 'onboarding-2', 'onboarding-3', 'get-started', 'login'],
+    screens: ['splash-screen', 'onboarding-1', 'onboarding-2', 'onboarding-3', 'get-started', 'login', 'otp-verification', 'complete-profile', 'home'],
     onboardingScreens: ['onboarding-1', 'onboarding-2', 'onboarding-3'],
     touchStartX: 0,
     touchEndX: 0,

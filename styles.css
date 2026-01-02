@@ -253,3 +253,123 @@ a:hover {
         padding-bottom: env(safe-area-inset-bottom);
     }
 }
+
+/* ============================================
+   TRIP CARD STYLES
+   ============================================ */
+.trip-card {
+    background: linear-gradient(180deg, #0f6a64, #0b524d);
+    border-radius: 18px;
+    padding: 16px;
+    color: #ffffff;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Header */
+.trip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.trip-type {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.trip-status {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.trip-status.boarding {
+    background: #f5a623;
+    color: #1b1b1b;
+}
+
+/* Route */
+.trip-route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.route-point {
+    text-align: center;
+}
+
+.route-point .city {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.route-point .time {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+/* Vertical line */
+.route-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 70px;
+}
+
+.route-line .dot {
+    width: 8px;
+    height: 8px;
+    background: #f5a623;
+    border-radius: 50%;
+}
+
+.route-line .line {
+    flex: 1;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    margin: 4px 0;
+}
+
+/* Footer */
+.trip-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* Trip Image */
+.trip-image {
+    position: relative;
+    height: 140px;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.trip-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Small badge on image */
+.image-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f5a623;
+    color: #1b1b1b;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
