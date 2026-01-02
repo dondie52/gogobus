@@ -603,6 +603,12 @@
 .logo-small svg {
     width: 32px;
     height: 32px;
+    filter: drop-shadow(0 2px 4px rgba(245, 166, 35, 0.3));
+    transition: transform var(--transition-base);
+}
+
+.logo-small:hover svg {
+    transform: scale(1.1);
 }
 
 .logo-small span {
@@ -652,6 +658,7 @@
     padding: var(--spacing-md);
     position: relative;
     overflow: hidden;
+    transform: rotate(90deg);
 }
 
 .bus-illustration::before {
