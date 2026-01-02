@@ -658,7 +658,7 @@
     padding: var(--spacing-md);
     position: relative;
     overflow: hidden;
-    transform: rotate(90deg);
+    transform: matrix(0, 1, -1, 0, 0, 0) rotate(630deg);
 }
 
 .bus-illustration::before {
