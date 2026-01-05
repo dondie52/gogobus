@@ -8,15 +8,13 @@
 // ===================
 const AuthState = {
     user: null,
-    signupData: {},
-    otpResendTimer: null,
-    otpResendSeconds: 30
+    signupData: {}
 };
 
 // ===================
 // LOGIN
 // ===================
-function handleLogin(event) {
+async function handleLogin(event) {
     event.preventDefault();
     
     const form = event.target;
@@ -37,22 +35,46 @@ function handleLogin(event) {
     // Show loading
     setButtonLoading(form.querySelector('.btn-submit'), true);
     
-    // Simulate API call (will be replaced with Supabase)
-    setTimeout(() => {
-        setButtonLoading(form.querySelector('.btn-submit'), false);
+    try {
+        // Sign in with Supabase
+        const { data, error } = await window.SupabaseAuth.signIn(email, password);
         
-        // For demo, just go to home
-        AuthState.user = { email };
-        localStorage.setItem('gogobus_user', JSON.stringify({ email }));
+        if (error) throw error;
+        
+        // Get user profile if exists
+        let profile = null;
+        if (data.user) {
+            try {
+                profile = await window.SupabaseProfile.getProfile(data.user.id);
+            } catch (profileError) {
+                // Profile might not exist yet, that's okay
+                console.log('Profile not found, user can complete it later');
+            }
+        }
+        
+        // Update auth state
+        AuthState.user = {
+            id: data.user.id,
+            email: data.user.email,
+            ...profile
+        };
+        localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+        
         showToast('Login successful!');
         goToScreen('home');
-    }, 1500);
+    } catch (error) {
+        console.error('Login error:', error);
+        showToast(error.message || 'Login failed. Please check your credentials.');
+        showInputError(form.password, error.message || 'Invalid credentials');
+    } finally {
+        setButtonLoading(form.querySelector('.btn-submit'), false);
+    }
 }
 
 // ===================
 // SIGN UP
 // ===================
-function handleSignup(event) {
+async function handleSignup(event) {
     event.preventDefault();
     
     const form = event.target;
@@ -88,189 +110,76 @@ function handleSignup(event) {
     // Show loading
     setButtonLoading(form.querySelector('.btn-submit'), true);
     
-    // Simulate sending OTP
-    setTimeout(() => {
-        setButtonLoading(form.querySelector('.btn-submit'), false);
+    try {
+        // Send magic link to email (Supabase signInWithOtp sends a link by default)
+        await sendOTPCode(email);
         
-        // Update OTP screen with email
+        // Update verification screen with email
         document.getElementById('otp-email-display').textContent = email;
         
-        showToast('Verification code sent!');
+        showToast('Verification link sent to your email!');
         goToScreen('otp-verification');
-        startOTPResendTimer();
-        initOTPInputs();
-    }, 1500);
+    } catch (error) {
+        console.error('Signup error:', error);
+        showToast(error.message || 'Failed to send verification link. Please try again.');
+    } finally {
+        setButtonLoading(form.querySelector('.btn-submit'), false);
+    }
 }
 
 // ===================
-// OTP VERIFICATION
+// EMAIL VERIFICATION (Magic Link)
 // ===================
-function initOTPInputs() {
-    const inputs = document.querySelectorAll('.otp-input');
-    
-    inputs.forEach((input, index) => {
-        // Clear previous values
-        input.value = '';
-        input.classList.remove('filled', 'error');
-        
-        // Handle input
-        input.addEventListener('input', (e) => {
-            const value = e.target.value;
-            
-            // Only allow numbers
-            e.target.value = value.replace(/[^0-9]/g, '');
-            
-            if (e.target.value) {
-                e.target.classList.add('filled');
-                // Move to next input
-                if (index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
-            } else {
-                e.target.classList.remove('filled');
-            }
-            
-            // Check if all filled
-            checkOTPComplete();
-        });
-        
-        // Handle backspace
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                inputs[index - 1].focus();
-            }
-        });
-        
-        // Handle paste
-        input.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 4);
-            
-            pastedData.split('').forEach((char, i) => {
-                if (inputs[i]) {
-                    inputs[i].value = char;
-                    inputs[i].classList.add('filled');
-                }
-            });
-            
-            // Focus last filled or next empty
-            const lastIndex = Math.min(pastedData.length, inputs.length) - 1;
-            if (lastIndex >= 0) {
-                inputs[Math.min(lastIndex + 1, inputs.length - 1)].focus();
-            }
-            
-            checkOTPComplete();
-        });
-    });
-    
-    // Focus first input
-    setTimeout(() => inputs[0]?.focus(), 300);
-}
+// Note: Magic link authentication is handled automatically by Supabase
+// When user clicks the link in their email, they'll be redirected back
+// and the auth state change will be detected by setupAuthListener
 
-function inputOTPDigit(digit) {
-    const inputs = document.querySelectorAll('.otp-input');
-    const emptyInput = Array.from(inputs).find(input => !input.value);
-    
-    if (emptyInput) {
-        emptyInput.value = digit;
-        emptyInput.classList.add('filled');
+// ===================
+// SEND MAGIC LINK
+// ===================
+async function sendOTPCode(email) {
+    try {
+        // Send magic link via Supabase (signInWithOtp sends a link by default)
+        const { data, error } = await window.SupabaseAuth.sendOTP(email);
         
-        const index = Array.from(inputs).indexOf(emptyInput);
-        if (index < inputs.length - 1) {
-            inputs[index + 1].focus();
-        }
+        if (error) throw error;
         
-        checkOTPComplete();
+        return data;
+    } catch (error) {
+        console.error('Send magic link error:', error);
+        throw error;
     }
 }
 
-function deleteOTPDigit() {
-    const inputs = document.querySelectorAll('.otp-input');
-    const filledInputs = Array.from(inputs).filter(input => input.value);
+async function resendOTP() {
+    const email = AuthState.signupData?.email || document.getElementById('otp-email-display')?.textContent;
     
-    if (filledInputs.length > 0) {
-        const lastFilled = filledInputs[filledInputs.length - 1];
-        lastFilled.value = '';
-        lastFilled.classList.remove('filled');
-        lastFilled.focus();
-    }
-}
-
-function checkOTPComplete() {
-    const inputs = document.querySelectorAll('.otp-input');
-    const otp = Array.from(inputs).map(i => i.value).join('');
-    
-    if (otp.length === 4) {
-        // Auto-submit when complete
-        setTimeout(() => handleOTPVerify({ preventDefault: () => {} }), 300);
-    }
-}
-
-function handleOTPVerify(event) {
-    event.preventDefault();
-    
-    const inputs = document.querySelectorAll('.otp-input');
-    const otp = Array.from(inputs).map(i => i.value).join('');
-    
-    if (otp.length !== 4) {
-        inputs.forEach(input => input.classList.add('error'));
-        showToast('Please enter the complete code');
+    if (!email) {
+        showToast('Unable to resend link. Please try signing up again.');
         return;
     }
     
-    // Show loading
-    const submitBtn = document.querySelector('#otp-form .btn-submit');
-    setButtonLoading(submitBtn, true);
-    
-    // Simulate verification (will be replaced with Supabase)
-    setTimeout(() => {
-        setButtonLoading(submitBtn, false);
-        
-        // For demo, accept any 4-digit code
-        // In production, verify with Supabase
-        
-        // Pre-fill profile form with signup data
-        prefillProfileForm();
-        
-        showToast('Verification successful!');
-        goToScreen('complete-profile');
-    }, 1500);
-}
-
-function startOTPResendTimer() {
-    AuthState.otpResendSeconds = 30;
     const resendBtn = document.getElementById('resend-btn');
-    const timerSpan = document.getElementById('resend-timer');
+    const originalText = resendBtn.innerHTML;
     
+    // Show loading state
     resendBtn.disabled = true;
+    resendBtn.innerHTML = 'Sending...';
     
-    if (AuthState.otpResendTimer) {
-        clearInterval(AuthState.otpResendTimer);
-    }
-    
-    AuthState.otpResendTimer = setInterval(() => {
-        AuthState.otpResendSeconds--;
-        timerSpan.textContent = `(${AuthState.otpResendSeconds}s)`;
+    try {
+        // Send new magic link via Supabase
+        await sendOTPCode(email);
         
-        if (AuthState.otpResendSeconds <= 0) {
-            clearInterval(AuthState.otpResendTimer);
-            resendBtn.disabled = false;
-            timerSpan.textContent = '';
-        }
-    }, 1000);
-}
-
-function resendOTP() {
-    showToast('New code sent!');
-    startOTPResendTimer();
-    
-    // Clear OTP inputs
-    const inputs = document.querySelectorAll('.otp-input');
-    inputs.forEach(input => {
-        input.value = '';
-        input.classList.remove('filled', 'error');
-    });
-    inputs[0]?.focus();
+        // Show success message
+        showToast('New verification link sent!');
+    } catch (error) {
+        console.error('Resend magic link error:', error);
+        showToast(error.message || 'Failed to resend link. Please try again.');
+    } finally {
+        // Restore button
+        resendBtn.disabled = false;
+        resendBtn.innerHTML = originalText;
+    }
 }
 
 // ===================
@@ -290,7 +199,7 @@ function prefillProfileForm() {
     }
 }
 
-function handleProfileComplete(event) {
+async function handleProfileComplete(event) {
     event.preventDefault();
     
     const form = event.target;
@@ -324,26 +233,67 @@ function handleProfileComplete(event) {
     // Show loading
     setButtonLoading(form.querySelector('.btn-submit'), true);
     
-    // Simulate profile save
-    setTimeout(() => {
-        setButtonLoading(form.querySelector('.btn-submit'), false);
+    try {
+        // Get current user
+        const session = await window.SupabaseAuth.getSession();
+        if (!session || !session.user) {
+            throw new Error('User not authenticated');
+        }
         
-        // Save user data
-        const userData = {
-            fullName,
-            email,
-            phone,
-            province,
-            city,
-            avatar: AuthState.signupData.avatar || null
+        const userId = session.user.id;
+        
+        // Prepare profile data
+        const profileData = {
+            full_name: fullName,
+            email: email,
+            phone: phone,
+            province: province,
+            city: city
         };
         
-        AuthState.user = userData;
-        localStorage.setItem('gogobus_user', JSON.stringify(userData));
+        // Upload avatar if provided
+        if (AuthState.signupData.avatar) {
+            // If avatar is a data URL, we need to convert it to a file
+            // For now, we'll store it as metadata or upload it
+            // This is a simplified version - you might want to upload to Supabase Storage
+            profileData.avatar_url = AuthState.signupData.avatar;
+        }
+        
+        // Update or create profile in Supabase
+        let profile;
+        try {
+            // Try to update existing profile
+            profile = await window.SupabaseProfile.updateProfile(userId, profileData);
+        } catch (updateError) {
+            // If profile doesn't exist, create it
+            // Note: This should ideally be handled by a database trigger
+            // For now, we'll try to insert
+            const { data, error } = await window.supabaseClient
+                .from('profiles')
+                .insert({ id: userId, ...profileData })
+                .select()
+                .single();
+            
+            if (error) throw error;
+            profile = data;
+        }
+        
+        // Update auth state
+        AuthState.user = {
+            id: userId,
+            email: session.user.email,
+            ...profile
+        };
+        localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
         
         // Show success modal
         showSuccessModal();
-    }, 1500);
+    } catch (error) {
+        console.error('Profile completion error:', error);
+        showToast(error.message || 'Failed to save profile. Please try again.');
+    } finally {
+        setButtonLoading(form.querySelector('.btn-submit'), false);
+    }
 }
 
 function previewAvatar(event) {
@@ -372,11 +322,49 @@ function previewAvatar(event) {
 }
 
 // ===================
+// FORGOT PASSWORD
+// ===================
+async function handleForgotPassword() {
+    const email = document.getElementById('login-email')?.value.trim();
+    
+    if (!email) {
+        showToast('Please enter your email address first');
+        document.getElementById('login-email')?.focus();
+        return;
+    }
+    
+    if (!validateEmail(email)) {
+        showToast('Please enter a valid email address');
+        document.getElementById('login-email')?.focus();
+        return;
+    }
+    
+    try {
+        // Send password reset email via Supabase
+        await window.SupabaseAuth.resetPassword(email);
+        showToast(`Password reset link sent to ${email}`);
+    } catch (error) {
+        console.error('Password reset error:', error);
+        showToast(error.message || 'Failed to send reset email. Please try again.');
+    }
+}
+
+// ===================
 // SOCIAL LOGIN
 // ===================
-function handleSocialLogin(provider) {
-    showToast(`${provider.charAt(0).toUpperCase() + provider.slice(1)} login coming soon!`);
-    // Will be implemented with Supabase OAuth
+async function handleSocialLogin(provider) {
+    try {
+        // Sign in with OAuth provider via Supabase
+        const { data, error } = await window.SupabaseAuth.signInWithProvider(provider);
+        
+        if (error) throw error;
+        
+        // OAuth will redirect, so we don't need to handle the response here
+        showToast(`Redirecting to ${provider}...`);
+    } catch (error) {
+        console.error('Social login error:', error);
+        showToast(error.message || `Failed to sign in with ${provider}. Please try again.`);
+    }
 }
 
 // ===================
@@ -481,11 +469,20 @@ function showToast(message) {
 // ===================
 // LOGOUT
 // ===================
-function logout() {
+async function logout() {
+    try {
+        // Sign out from Supabase
+        await window.SupabaseAuth.signOut();
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+    
+    // Clear local state
     AuthState.user = null;
     localStorage.removeItem('gogobus_user');
     localStorage.removeItem('gogobus_onboarding_complete');
     localStorage.removeItem('gogobus_last_screen');
+    
     showToast('Logged out successfully');
     goToScreen('get-started');
 }
@@ -493,31 +490,148 @@ function logout() {
 // ===================
 // CHECK AUTH ON LOAD
 // ===================
-function checkAuth() {
-    const savedUser = localStorage.getItem('gogobus_user');
-    if (savedUser) {
-        try {
-            AuthState.user = JSON.parse(savedUser);
-        } catch (e) {
-            localStorage.removeItem('gogobus_user');
+async function checkAuth() {
+    try {
+        // Handle magic link redirect (check URL hash for access_token)
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        
+        if (accessToken) {
+            // User just clicked magic link, clear hash
+            window.location.hash = '';
         }
+        
+        // Check Supabase session
+        const session = await window.SupabaseAuth.getSession();
+        
+        if (session && session.user) {
+            // Get user profile
+            let profile = null;
+            try {
+                profile = await window.SupabaseProfile.getProfile(session.user.id);
+            } catch (profileError) {
+                // Profile might not exist yet
+                console.log('Profile not found');
+            }
+            
+            AuthState.user = {
+                id: session.user.id,
+                email: session.user.email,
+                ...profile
+            };
+            localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+            
+            // If user just verified and has signup data, navigate to complete profile
+            if (accessToken && AuthState.signupData && !profile) {
+                prefillProfileForm();
+                goToScreen('complete-profile');
+            }
+        } else {
+            // Fallback to localStorage
+            const savedUser = localStorage.getItem('gogobus_user');
+            if (savedUser) {
+                try {
+                    AuthState.user = JSON.parse(savedUser);
+                } catch (e) {
+                    localStorage.removeItem('gogobus_user');
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Auth check error:', error);
+        // Fallback to localStorage
+        const savedUser = localStorage.getItem('gogobus_user');
+        if (savedUser) {
+            try {
+                AuthState.user = JSON.parse(savedUser);
+            } catch (e) {
+                localStorage.removeItem('gogobus_user');
+            }
+        }
+    }
+}
+
+// ===================
+// AUTH STATE LISTENER
+// ===================
+async function handleAuthSuccess(session) {
+    if (!session || !session.user) return;
+    
+    try {
+        // Get user profile if exists
+        let profile = null;
+        try {
+            profile = await window.SupabaseProfile.getProfile(session.user.id);
+        } catch (profileError) {
+            // Profile might not exist yet
+            console.log('Profile not found');
+        }
+        
+        AuthState.user = {
+            id: session.user.id,
+            email: session.user.email,
+            ...profile
+        };
+        localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+        
+        // If user came from signup and has signup data, go to complete profile
+        if (AuthState.signupData && !profile) {
+            prefillProfileForm();
+            showToast('Email verified successfully!');
+            goToScreen('complete-profile');
+        } else {
+            showToast('Welcome back!');
+            goToScreen('home');
+        }
+    } catch (error) {
+        console.error('Error handling auth success:', error);
+        showToast('Authentication successful, but there was an error loading your profile.');
+    }
+}
+
+function setupAuthListener() {
+    if (window.SupabaseAuth && window.SupabaseAuth.onAuthStateChange) {
+        window.SupabaseAuth.onAuthStateChange(async (event, session) => {
+            console.log('Auth state changed:', event, session);
+            
+            if (event === 'SIGNED_IN' && session) {
+                // User signed in (likely from magic link)
+                await handleAuthSuccess(session);
+            } else if (event === 'SIGNED_OUT') {
+                // User signed out
+                AuthState.user = null;
+                localStorage.removeItem('gogobus_user');
+            }
+        });
     }
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    checkAuth();
+    // Wait for Supabase to be ready
+    if (window.SupabaseAuth && window.supabaseClient) {
+        checkAuth();
+        setupAuthListener();
+    } else {
+        // Retry after a short delay if Supabase isn't loaded yet
+        setTimeout(() => {
+            if (window.SupabaseAuth && window.supabaseClient) {
+                checkAuth();
+                setupAuthListener();
+            } else {
+                console.error('Supabase not loaded. Make sure supabase-config.js is loaded before auth.js');
+            }
+        }, 100);
+    }
 });
 
 // Expose functions globally
 window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
-window.handleOTPVerify = handleOTPVerify;
 window.handleProfileComplete = handleProfileComplete;
 window.handleSocialLogin = handleSocialLogin;
+window.handleForgotPassword = handleForgotPassword;
 window.togglePassword = togglePassword;
-window.inputOTPDigit = inputOTPDigit;
-window.deleteOTPDigit = deleteOTPDigit;
 window.resendOTP = resendOTP;
 window.previewAvatar = previewAvatar;
 window.showToast = showToast;
