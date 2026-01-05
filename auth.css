@@ -275,6 +275,29 @@
     margin-top: calc(-1 * var(--spacing-sm));
 }
 
+/* Reset Password */
+.reset-view {
+    display: none;
+}
+
+.reset-view.active {
+    display: block;
+}
+
+.reset-info {
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+}
+
+.reset-status {
+    min-height: 20px;
+    font-size: var(--font-size-sm);
+    color: rgba(255, 255, 255, 0.7);
+    margin: calc(-1 * var(--spacing-sm)) 0 var(--spacing-md);
+}
+
 /* Submit Button */
 .btn-submit {
     margin-top: var(--spacing-md);

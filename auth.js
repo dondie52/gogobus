@@ -367,30 +367,98 @@ function previewAvatar(event) {
 }
 
 // ===================
-// FORGOT PASSWORD
+// RESET PASSWORD
 // ===================
-async function handleForgotPassword() {
+function setResetView(view) {
+    const views = document.querySelectorAll('[data-reset-view]');
+    views.forEach((section) => {
+        section.classList.toggle('active', section.dataset.resetView === view);
+    });
+}
+
+function goToResetPassword() {
     const email = document.getElementById('login-email')?.value.trim();
-    
+    const resetEmailInput = document.getElementById('reset-email');
+
+    if (resetEmailInput && email) {
+        resetEmailInput.value = email;
+    }
+
+    const status = document.getElementById('reset-status');
+    if (status) status.textContent = '';
+
+    setResetView('request');
+    goToScreen('reset-password');
+    resetEmailInput?.focus();
+}
+
+async function handleResetPassword(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const emailInput = form.email;
+    const email = emailInput.value.trim();
+    const status = document.getElementById('reset-status');
+
     if (!email) {
-        showToast('Please enter your email address first');
-        document.getElementById('login-email')?.focus();
+        showInputError(emailInput, 'Please enter your email address');
         return;
     }
-    
+
     if (!validateEmail(email)) {
-        showToast('Please enter a valid email address');
-        document.getElementById('login-email')?.focus();
+        showInputError(emailInput, 'Please enter a valid email address');
         return;
     }
-    
+
+    setButtonLoading(form.querySelector('.btn-submit'), true);
+    if (status) status.textContent = '';
+
     try {
-        // Send password reset email via Supabase
         await window.SupabaseAuth.resetPassword(email);
         showToast(`Password reset link sent to ${email}`);
+        if (status) status.textContent = 'Check your inbox for the reset link.';
     } catch (error) {
         console.error('Password reset error:', error);
         showToast(error.message || 'Failed to send reset email. Please try again.');
+        if (status) status.textContent = 'Unable to send reset email. Please try again.';
+    } finally {
+        setButtonLoading(form.querySelector('.btn-submit'), false);
+    }
+}
+
+async function handleUpdatePassword(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const newPassword = form.newPassword.value.trim();
+    const confirmPassword = form.confirmPassword.value.trim();
+    const status = document.getElementById('update-status');
+
+    if (newPassword.length < 8) {
+        showInputError(form.newPassword, 'Password must be at least 8 characters');
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        showInputError(form.confirmPassword, 'Passwords do not match');
+        return;
+    }
+
+    setButtonLoading(form.querySelector('.btn-submit'), true);
+    if (status) status.textContent = '';
+
+    try {
+        await window.SupabaseAuth.updatePassword(newPassword);
+        showToast('Password updated successfully');
+        if (status) status.textContent = 'Your password has been updated. You can now log in.';
+        setResetView('request');
+        goToScreen('login');
+    } catch (error) {
+        console.error('Update password error:', error);
+        showToast(error.message || 'Failed to update password. Please try again.');
+        if (status) status.textContent = 'Unable to update password. Please try again.';
+    } finally {
+        setButtonLoading(form.querySelector('.btn-submit'), false);
     }
 }
 
@@ -543,8 +611,16 @@ async function checkAuth() {
         loadSignupDataFromStorage();
         
         // Handle magic link redirect (check URL hash for access_token)
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const hashValue = window.location.hash.substring(1);
+        const hashParams = new URLSearchParams(hashValue);
         const accessToken = hashParams.get('access_token');
+        const recoveryType = hashParams.get('type');
+        const isResetHash = hashValue.startsWith('reset-password') || hashParams.has('reset-password');
+
+        if (window.location.pathname.includes('reset-password') || recoveryType === 'recovery' || isResetHash) {
+            setResetView('update');
+            goToScreen('reset-password');
+        }
         
         if (accessToken) {
             // User just clicked magic link, clear hash
@@ -655,7 +731,10 @@ function setupAuthListener() {
         window.SupabaseAuth.onAuthStateChange(async (event, session) => {
             console.log('Auth state changed:', event, session);
             
-            if (event === 'SIGNED_IN' && session) {
+            if (event === 'PASSWORD_RECOVERY') {
+                setResetView('update');
+                goToScreen('reset-password');
+            } else if (event === 'SIGNED_IN' && session) {
                 // User signed in (likely from magic link)
                 await handleAuthSuccess(session);
             } else if (event === 'SIGNED_OUT') {
@@ -691,7 +770,10 @@ window.handleLogin = handleLogin;
 window.handleSignup = handleSignup;
 window.handleProfileComplete = handleProfileComplete;
 window.handleSocialLogin = handleSocialLogin;
-window.handleForgotPassword = handleForgotPassword;
+window.goToResetPassword = goToResetPassword;
+window.handleResetPassword = handleResetPassword;
+window.handleUpdatePassword = handleUpdatePassword;
+window.setResetView = setResetView;
 window.togglePassword = togglePassword;
 window.resendOTP = resendOTP;
 window.previewAvatar = previewAvatar;

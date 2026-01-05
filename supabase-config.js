@@ -92,8 +92,10 @@ const SupabaseAuth = {
     },
     
     async resetPassword(email) {
+        const redirectBase = `${window.location.origin}${window.location.pathname}`;
+        const redirectUrl = `${redirectBase}#reset-password`;
         const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`
+            redirectTo: redirectUrl
         });
         if (error) throw error;
         return data;
