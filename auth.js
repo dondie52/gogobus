@@ -11,6 +11,22 @@ const AuthState = {
     signupData: {}
 };
 
+// Helper function to load signupData from localStorage
+function loadSignupDataFromStorage() {
+    const savedSignupData = localStorage.getItem('gogobus_signupData');
+    if (savedSignupData) {
+        try {
+            AuthState.signupData = JSON.parse(savedSignupData);
+            return AuthState.signupData;
+        } catch (e) {
+            console.error('Error parsing signupData from localStorage:', e);
+            localStorage.removeItem('gogobus_signupData');
+            return null;
+        }
+    }
+    return null;
+}
+
 // ===================
 // LOGIN
 // ===================
@@ -104,8 +120,9 @@ async function handleSignup(event) {
         return;
     }
     
-    // Store signup data
+    // Store signup data in memory and localStorage
     AuthState.signupData = { fullName, email, phone, password };
+    localStorage.setItem('gogobus_signupData', JSON.stringify(AuthState.signupData));
     
     // Show loading
     setButtonLoading(form.querySelector('.btn-submit'), true);
@@ -186,15 +203,27 @@ async function resendOTP() {
 // COMPLETE PROFILE
 // ===================
 function prefillProfileForm() {
-    const data = AuthState.signupData;
+    // Try to get signupData from memory first, then localStorage
+    let data = AuthState.signupData;
+    if (!data) {
+        const savedSignupData = localStorage.getItem('gogobus_signupData');
+        if (savedSignupData) {
+            try {
+                data = JSON.parse(savedSignupData);
+                AuthState.signupData = data; // Also set in memory for consistency
+            } catch (e) {
+                console.error('Error parsing signupData from localStorage:', e);
+            }
+        }
+    }
     
-    if (data.fullName) {
+    if (data && data.fullName) {
         document.getElementById('profile-name').value = data.fullName;
     }
-    if (data.email) {
+    if (data && data.email) {
         document.getElementById('profile-email').value = data.email;
     }
-    if (data.phone) {
+    if (data && data.phone) {
         document.getElementById('profile-phone').value = data.phone;
     }
 }
@@ -251,12 +280,24 @@ async function handleProfileComplete(event) {
             city: city
         };
         
-        // Upload avatar if provided
-        if (AuthState.signupData.avatar) {
+        // Upload avatar if provided (check both memory and localStorage)
+        let signupData = AuthState.signupData;
+        if (!signupData) {
+            const savedSignupData = localStorage.getItem('gogobus_signupData');
+            if (savedSignupData) {
+                try {
+                    signupData = JSON.parse(savedSignupData);
+                } catch (e) {
+                    console.error('Error parsing signupData:', e);
+                }
+            }
+        }
+        
+        if (signupData && signupData.avatar) {
             // If avatar is a data URL, we need to convert it to a file
             // For now, we'll store it as metadata or upload it
             // This is a simplified version - you might want to upload to Supabase Storage
-            profileData.avatar_url = AuthState.signupData.avatar;
+            profileData.avatar_url = signupData.avatar;
         }
         
         // Update or create profile in Supabase
@@ -285,6 +326,10 @@ async function handleProfileComplete(event) {
             ...profile
         };
         localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+        
+        // Clear signupData from localStorage and memory since profile is now complete
+        localStorage.removeItem('gogobus_signupData');
+        AuthState.signupData = {};
         
         // Show success modal
         showSuccessModal();
@@ -479,7 +524,9 @@ async function logout() {
     
     // Clear local state
     AuthState.user = null;
+    AuthState.signupData = {};
     localStorage.removeItem('gogobus_user');
+    localStorage.removeItem('gogobus_signupData');
     localStorage.removeItem('gogobus_onboarding_complete');
     localStorage.removeItem('gogobus_last_screen');
     
@@ -492,6 +539,9 @@ async function logout() {
 // ===================
 async function checkAuth() {
     try {
+        // Load signupData from localStorage if available
+        loadSignupDataFromStorage();
+        
         // Handle magic link redirect (check URL hash for access_token)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
@@ -521,8 +571,14 @@ async function checkAuth() {
             };
             localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
             
+            // If user already has a profile, clear any stale signupData
+            if (profile) {
+                localStorage.removeItem('gogobus_signupData');
+                AuthState.signupData = {};
+            }
+            
             // If user just verified and has signup data, navigate to complete profile
-            if (accessToken && AuthState.signupData && !profile) {
+            if (accessToken && AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
                 prefillProfileForm();
                 goToScreen('complete-profile');
             }
@@ -558,6 +614,11 @@ async function handleAuthSuccess(session) {
     if (!session || !session.user) return;
     
     try {
+        // Load signupData from localStorage if not already in memory
+        if (!AuthState.signupData || Object.keys(AuthState.signupData).length === 0) {
+            loadSignupDataFromStorage();
+        }
+        
         // Get user profile if exists
         let profile = null;
         try {
@@ -575,7 +636,7 @@ async function handleAuthSuccess(session) {
         localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
         
         // If user came from signup and has signup data, go to complete profile
-        if (AuthState.signupData && !profile) {
+        if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
             prefillProfileForm();
             showToast('Email verified successfully!');
             goToScreen('complete-profile');
