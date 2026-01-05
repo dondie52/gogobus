@@ -72,7 +72,7 @@ async function handleLogin(event) {
         AuthState.user = {
             id: data.user.id,
             email: data.user.email,
-            ...profile
+            ...(profile || {})
         };
         localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
         
@@ -323,7 +323,7 @@ async function handleProfileComplete(event) {
         AuthState.user = {
             id: userId,
             email: session.user.email,
-            ...profile
+            ...(profile || {})
         };
         localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
         
@@ -567,7 +567,7 @@ async function checkAuth() {
             AuthState.user = {
                 id: session.user.id,
                 email: session.user.email,
-                ...profile
+                ...(profile || {})
             };
             localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
             
@@ -631,7 +631,7 @@ async function handleAuthSuccess(session) {
         AuthState.user = {
             id: session.user.id,
             email: session.user.email,
-            ...profile
+            ...(profile || {})
         };
         localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
         
