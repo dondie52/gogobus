@@ -90,8 +90,14 @@ const SupabaseAuth = {
     },
     
     async resetPassword(email) {
+        // Use GitHub Pages URL for production, fallback to current origin for local dev
+        const isProduction = window.location.hostname.includes('github.io');
+        const baseUrl = isProduction 
+            ? 'https://dondie52.github.io/gogobus'
+            : window.location.origin;
+        
         const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password.html`
+            redirectTo: `${baseUrl}/reset-password.html`
         });
         if (error) throw error;
         return data;
