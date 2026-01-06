@@ -12,7 +12,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // BASE URL FOR REDIRECTS
 // For GitHub Pages: https://username.github.io/repo-name
 // ===================
-const BASE_URL = 'https://dondie.github.io/gogobus';
+const BASE_URL = 'https://dondie52.github.io/gogobus';
 
 // ===================
 // INITIALIZE SUPABASE CLIENT
