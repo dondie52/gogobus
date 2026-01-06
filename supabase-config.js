@@ -97,7 +97,7 @@ const SupabaseAuth = {
             : window.location.origin;
         
         const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: `${baseUrl}/reset-password.html`
+            redirectTo: `${baseUrl}/reset-password/`
         });
         if (error) throw error;
         return data;
