@@ -7,13 +7,19 @@
 // SUPABASE CREDENTIALS
 // Get these from: Supabase Dashboard → Settings → API
 // ===================
-const SUPABASE_URL = 'https://jhnnazntoimddmclzile.supabase.co'; // e.g., 'https://xxxxx.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impobm5hem50b2ltZGRtY2x6aWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNzMxNzYsImV4cCI6MjA4Mjk0OTE3Nn0.D2swkrh_enTdXC54nERVdoXCwbBVOIGnqYRKtL6eIT8'; // The long anon/public key
+const SUPABASE_URL = 'https://jhnnazntoimddmclzile.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impobm5hem50b2ltZGRtY2x6aWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNzMxNzYsImV4cCI6MjA4Mjk0OTE3Nn0.D2swkrh_enTdXC54nERVdoXCwbBVOIGnqYRKtL6eIT8';
+
+// ===================
+// BASE URL FOR REDIRECTS
+// For GitHub Pages: https://username.github.io/repo-name
+// ===================
+const BASE_URL = 'https://dondie52.github.io/gogobus';
 
 // ===================
 // INITIALIZE SUPABASE CLIENT
 // ===================
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ===================
 // AUTH HELPERS
@@ -24,7 +30,7 @@ const SupabaseAuth = {
      * Sign up with email and password
      */
     async signUp(email, password, metadata = {}) {
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await supabaseClient.auth.signUp({
             email,
             password,
             options: {
@@ -40,7 +46,7 @@ const SupabaseAuth = {
      * Sign in with email and password
      */
     async signIn(email, password) {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
             email,
             password
         });
@@ -53,10 +59,10 @@ const SupabaseAuth = {
      * Sign in with OAuth provider (Google, Facebook, Apple)
      */
     async signInWithProvider(provider) {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider, // 'google', 'facebook', 'apple'
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider,
             options: {
-                redirectTo: window.location.origin
+                redirectTo: BASE_URL
             }
         });
         
@@ -68,7 +74,7 @@ const SupabaseAuth = {
      * Sign out
      */
     async signOut() {
-        const { error } = await supabase.auth.signOut();
+        const { error } = await supabaseClient.auth.signOut();
         if (error) throw error;
     },
     
@@ -76,7 +82,7 @@ const SupabaseAuth = {
      * Get current session
      */
     async getSession() {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
         if (error) throw error;
         return session;
     },
@@ -85,7 +91,7 @@ const SupabaseAuth = {
      * Get current user
      */
     async getUser() {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
         if (error) throw error;
         return user;
     },
@@ -94,7 +100,7 @@ const SupabaseAuth = {
      * Send OTP to email
      */
     async sendOTP(email) {
-        const { data, error } = await supabase.auth.signInWithOtp({
+        const { data, error } = await supabaseClient.auth.signInWithOtp({
             email,
             options: {
                 shouldCreateUser: true
@@ -109,7 +115,7 @@ const SupabaseAuth = {
      * Verify OTP
      */
     async verifyOTP(email, token) {
-        const { data, error } = await supabase.auth.verifyOtp({
+        const { data, error } = await supabaseClient.auth.verifyOtp({
             email,
             token,
             type: 'email'
@@ -123,8 +129,8 @@ const SupabaseAuth = {
      * Reset password
      */
     async resetPassword(email) {
-        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`
+        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: `${BASE_URL}/reset-password`
         });
         
         if (error) throw error;
@@ -135,7 +141,7 @@ const SupabaseAuth = {
      * Update password
      */
     async updatePassword(newPassword) {
-        const { data, error } = await supabase.auth.updateUser({
+        const { data, error } = await supabaseClient.auth.updateUser({
             password: newPassword
         });
         
@@ -147,7 +153,7 @@ const SupabaseAuth = {
      * Listen to auth state changes
      */
     onAuthStateChange(callback) {
-        return supabase.auth.onAuthStateChange((event, session) => {
+        return supabaseClient.auth.onAuthStateChange((event, session) => {
             callback(event, session);
         });
     }
@@ -162,29 +168,37 @@ const SupabaseProfile = {
      * Get user profile
      */
     async getProfile(userId) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('profiles')
             .select('*')
             .eq('id', userId)
             .single();
-        
-        if (error) throw error;
+        if (error && error.code !== 'PGRST116') throw error;
         return data;
     },
     
-    /**
-     * Update user profile
-     */
     async updateProfile(userId, updates) {
-        const { data, error } = await supabase
+        // Try update first
+        const { data: updateData, error: updateError } = await supabaseClient
             .from('profiles')
             .update(updates)
             .eq('id', userId)
             .select()
             .single();
         
-        if (error) throw error;
-        return data;
+        // If no rows found, insert instead
+        if (updateError && (updateError.code === 'PGRST116' || updateError.message?.includes('No rows'))) {
+            const { data: insertData, error: insertError } = await supabaseClient
+                .from('profiles')
+                .insert({ id: userId, ...updates })
+                .select()
+                .single();
+            if (insertError) throw insertError;
+            return insertData;
+        }
+        
+        if (updateError) throw updateError;
+        return updateData;
     },
     
     /**
@@ -196,14 +210,14 @@ const SupabaseProfile = {
         const filePath = `avatars/${fileName}`;
         
         // Upload file
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabaseClient.storage
             .from('avatars')
             .upload(filePath, file);
         
         if (uploadError) throw uploadError;
         
         // Get public URL
-        const { data: { publicUrl } } = supabase.storage
+        const { data: { publicUrl } } = supabaseClient.storage
             .from('avatars')
             .getPublicUrl(filePath);
         
@@ -229,7 +243,7 @@ const SupabaseBookings = {
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
         
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('schedules')
             .select(`
                 *,
@@ -255,7 +269,7 @@ const SupabaseBookings = {
      * Create booking
      */
     async createBooking(bookingData) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('bookings')
             .insert(bookingData)
             .select()
@@ -269,7 +283,7 @@ const SupabaseBookings = {
      * Get user's bookings
      */
     async getUserBookings(userId) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('bookings')
             .select(`
                 *,
@@ -290,7 +304,7 @@ const SupabaseBookings = {
      * Cancel booking
      */
     async cancelBooking(bookingId) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('bookings')
             .update({ status: 'cancelled' })
             .eq('id', bookingId)
@@ -311,7 +325,7 @@ const SupabaseRoutes = {
      * Get all active routes
      */
     async getRoutes() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('routes')
             .select('*')
             .eq('is_active', true)
@@ -338,14 +352,13 @@ const SupabaseRoutes = {
 };
 
 // ===================
-// EXPORT
+// EXPORT GLOBALLY
 // ===================
-window.supabaseClient = supabase;
+window.supabaseClient = supabaseClient;
 window.SupabaseAuth = SupabaseAuth;
 window.SupabaseProfile = SupabaseProfile;
 window.SupabaseBookings = SupabaseBookings;
 window.SupabaseRoutes = SupabaseRoutes;
 
-// Log initialization status
-console.log('🔌 Supabase client initialized');
-console.log('📡 URL:', SUPABASE_URL === 'YOUR_SUPABASE_URL' ? '⚠️ Not configured' : '✅ Configured');
+console.log('✅ Supabase initialized successfully');
+console.log('🔗 Base URL:', BASE_URL);
