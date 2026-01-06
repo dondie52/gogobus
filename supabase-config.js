@@ -69,12 +69,10 @@ const SupabaseAuth = {
     },
     
     async sendOTP(email) {
-        // Send magic link (signInWithOtp sends a link by default, not a code)
         const { data, error } = await supabaseClient.auth.signInWithOtp({
             email,
             options: {
-                shouldCreateUser: true,
-                emailRedirectTo: window.location.origin + window.location.pathname
+                shouldCreateUser: true
             }
         });
         if (error) throw error;
@@ -93,7 +91,7 @@ const SupabaseAuth = {
     
     async resetPassword(email) {
         const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`
+            redirectTo: `${window.location.origin}/reset-password.html`
         });
         if (error) throw error;
         return data;
