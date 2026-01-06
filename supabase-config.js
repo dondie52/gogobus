@@ -9,8 +9,13 @@ const SUPABASE_URL = 'https://jhnnazntoimddmclzile.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impobm5hem50b2ltZGRtY2x6aWxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczNzMxNzYsImV4cCI6MjA4Mjk0OTE3Nn0.D2swkrh_enTdXC54nERVdoXCwbBVOIGnqYRKtL6eIT8';
 
 // ===================
+// BASE URL FOR REDIRECTS
+// For GitHub Pages: https://username.github.io/repo-name
+// ===================
+const BASE_URL = 'https://dondie.github.io/gogobus';
+
+// ===================
 // INITIALIZE SUPABASE CLIENT
-// Use a different variable name to avoid conflict with CDN
 // ===================
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -44,7 +49,7 @@ const SupabaseAuth = {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: window.location.origin
+                redirectTo: BASE_URL
             }
         });
         if (error) throw error;
@@ -90,14 +95,8 @@ const SupabaseAuth = {
     },
     
     async resetPassword(email) {
-        // Use GitHub Pages URL for production, fallback to current origin for local dev
-        const isProduction = window.location.hostname.includes('github.io');
-        const baseUrl = isProduction 
-            ? 'https://dondie52.github.io/gogobus'
-            : window.location.origin;
-        
         const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: `${baseUrl}/reset-password/`
+            redirectTo: `${BASE_URL}/reset-password`
         });
         if (error) throw error;
         return data;
@@ -185,3 +184,4 @@ window.SupabaseAuth = SupabaseAuth;
 window.SupabaseProfile = SupabaseProfile;
 
 console.log('✅ Supabase initialized successfully');
+console.log('🔗 Base URL:', BASE_URL);
