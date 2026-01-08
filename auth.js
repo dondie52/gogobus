@@ -8,8 +8,12 @@
 // ===================
 const AuthState = {
     user: null,
-    signupData: {}
+    signupData: {} // Note: password is stored here temporarily in memory only, never in localStorage
 };
+
+// Constants
+const MAGIC_LINK_AUTH_TIMEOUT = 5000; // 5 seconds timeout for magic link processing
+const PROFILE_NOT_FOUND_CODE = 'PGRST116'; // Supabase code for "not found"
 
 // Helper function to load signupData from localStorage
 function loadSignupDataFromStorage() {
@@ -63,8 +67,11 @@ async function handleLogin(event) {
             try {
                 profile = await window.SupabaseProfile.getProfile(data.user.id);
             } catch (profileError) {
-                // Profile might not exist yet, that's okay
-                console.log('Profile not found, user can complete it later');
+                if (profileError.code === PROFILE_NOT_FOUND_CODE) {
+                    console.debug('Profile not found - user can complete it later');
+                } else {
+                    console.error('Error fetching profile:', profileError);
+                }
             }
         }
         
@@ -83,14 +90,25 @@ async function handleLogin(event) {
         
         // Provide more helpful error messages
         let errorMessage = 'Login failed. Please check your credentials.';
-        if (error.message) {
-            if (error.message.includes('Email not confirmed') || error.message.includes('not confirmed')) {
+        const errorCode = error.status || error.code;
+        const errorMsg = error.message || '';
+        const errorMsgLower = errorMsg.toLowerCase();
+        
+        if (errorCode === 400) {
+            // Check for specific error messages with more robust matching
+            if (errorMsgLower.includes('email not confirmed') || 
+                errorMsgLower.includes('not confirmed') ||
+                errorMsgLower.includes('email_not_confirmed')) {
                 errorMessage = 'Please verify your email address before logging in. Check your inbox for the confirmation link.';
-            } else if (error.message.includes('Invalid login credentials') || error.message.includes('invalid')) {
+            } else if (errorMsgLower.includes('invalid login credentials') || 
+                       errorMsgLower.includes('invalid') ||
+                       errorMsgLower.includes('invalid_credentials')) {
                 errorMessage = 'Invalid email or password. Please check your credentials and try again.';
             } else {
-                errorMessage = error.message;
+                errorMessage = errorMsg || errorMessage;
             }
+        } else if (errorMsg) {
+            errorMessage = errorMsg;
         }
         
         showToast(errorMessage);
@@ -133,9 +151,11 @@ async function handleSignup(event) {
         return;
     }
     
-    // Store signup data in memory and localStorage
-    AuthState.signupData = { fullName, email, phone, password };
-    localStorage.setItem('gogobus_signupData', JSON.stringify(AuthState.signupData));
+    // Store signup data (password kept in memory only, never stored in localStorage)
+    // Store non-sensitive data in localStorage for profile completion
+    const signupDataForStorage = { fullName, email, phone };
+    AuthState.signupData = { fullName, email, phone, password }; // Password in memory only
+    localStorage.setItem('gogobus_signupData', JSON.stringify(signupDataForStorage));
     
     // Show loading
     setButtonLoading(form.querySelector('.btn-submit'), true);
@@ -150,11 +170,45 @@ async function handleSignup(event) {
         
         if (error) throw error;
         
-        // Update verification screen with email
-        document.getElementById('otp-email-display').textContent = email;
-        
-        showToast('Account created! Please check your email to verify your account.');
-        goToScreen('otp-verification');
+        // Check if user is immediately signed in (email confirmation disabled in Supabase)
+        if (data.session && data.user) {
+            // User is already authenticated, proceed to profile completion
+            AuthState.user = {
+                id: data.user.id,
+                email: data.user.email
+            };
+            localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+            
+            // Check if profile already exists
+            let profile = null;
+            try {
+                profile = await window.SupabaseProfile.getProfile(data.user.id);
+            } catch (profileError) {
+                if (profileError.code === PROFILE_NOT_FOUND_CODE) {
+                    console.debug('Profile not found - new user, proceeding to profile completion');
+                } else {
+                    console.error('Error fetching profile:', profileError);
+                }
+            }
+            
+            if (profile) {
+                // User already has profile, go to home
+                AuthState.user = { ...AuthState.user, ...profile };
+                localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+                showToast('Account created successfully!');
+                goToScreen('home');
+            } else {
+                // User needs to complete profile
+                prefillProfileForm();
+                showToast('Account created! Please complete your profile.');
+                goToScreen('complete-profile');
+            }
+        } else {
+            // Email confirmation required, show verification screen
+            document.getElementById('otp-email-display').textContent = email;
+            showToast('Account created! Please check your email to verify your account.');
+            goToScreen('otp-verification');
+        }
     } catch (error) {
         console.error('Signup error:', error);
         showToast(error.message || 'Failed to create account. Please try again.');
@@ -223,13 +277,16 @@ async function resendOTP() {
 // ===================
 function prefillProfileForm() {
     // Try to get signupData from memory first, then localStorage
+    // Note: password is not included in localStorage, only in memory
     let data = AuthState.signupData;
-    if (!data) {
+    if (!data || Object.keys(data).length === 0) {
         const savedSignupData = localStorage.getItem('gogobus_signupData');
         if (savedSignupData) {
             try {
-                data = JSON.parse(savedSignupData);
-                AuthState.signupData = data; // Also set in memory for consistency
+                const parsedData = JSON.parse(savedSignupData);
+                // Restore to memory (password might not be present if coming from localStorage)
+                AuthState.signupData = { ...AuthState.signupData, ...parsedData };
+                data = AuthState.signupData;
             } catch (e) {
                 console.error('Error parsing signupData from localStorage:', e);
             }
@@ -300,12 +357,15 @@ async function handleProfileComplete(event) {
         };
         
         // Upload avatar if provided (check both memory and localStorage)
+        // Note: signupData in localStorage doesn't contain password (security)
         let signupData = AuthState.signupData;
-        if (!signupData) {
+        if (!signupData || Object.keys(signupData).length === 0) {
             const savedSignupData = localStorage.getItem('gogobus_signupData');
             if (savedSignupData) {
                 try {
-                    signupData = JSON.parse(savedSignupData);
+                    const parsedData = JSON.parse(savedSignupData);
+                    // Merge with any data in memory (which might have password)
+                    signupData = { ...AuthState.signupData, ...parsedData };
                 } catch (e) {
                     console.error('Error parsing signupData:', e);
                 }
@@ -554,11 +614,51 @@ async function logout() {
 }
 
 // ===================
+// HELPER: Handle User Session
+// ===================
+async function handleUserSession(session) {
+    if (!session || !session.user) return null;
+    
+    // Get user profile if exists
+    let profile = null;
+    try {
+        profile = await window.SupabaseProfile.getProfile(session.user.id);
+    } catch (profileError) {
+        if (profileError.code === PROFILE_NOT_FOUND_CODE) {
+            console.debug('Profile not found - new user');
+        } else {
+            console.error('Error fetching profile:', profileError);
+        }
+    }
+    
+    // Update auth state
+    AuthState.user = {
+        id: session.user.id,
+        email: session.user.email,
+        ...profile
+    };
+    localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+    
+    // If user already has a profile, clear any stale signupData
+    if (profile) {
+        localStorage.removeItem('gogobus_signupData');
+        AuthState.signupData = {};
+    }
+    
+    // Load signupData if not already loaded (without password)
+    if (!AuthState.signupData || Object.keys(AuthState.signupData).length === 0) {
+        loadSignupDataFromStorage();
+    }
+    
+    return { profile, user: AuthState.user };
+}
+
+// ===================
 // CHECK AUTH ON LOAD
 // ===================
 async function checkAuth() {
     try {
-        // Load signupData from localStorage if available
+        // Load signupData from localStorage if available (without password)
         loadSignupDataFromStorage();
         
         // Handle magic link redirect (check URL hash for access_token)
@@ -566,55 +666,62 @@ async function checkAuth() {
         const accessToken = hashParams.get('access_token');
         const type = hashParams.get('type');
         
-        // If we have a magic link token, wait for Supabase to process it
-        if (accessToken && type === 'email') {
-            // Don't clear hash yet - let Supabase process it first
-            // Wait a moment for Supabase to establish the session
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Now check for session (Supabase should have processed the token)
-            let session = await window.SupabaseAuth.getSession();
-            
-            // If still no session, wait a bit more
-            if (!session) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                session = await window.SupabaseAuth.getSession();
-            }
-            
-            // Clear hash after processing
-            window.location.hash = '';
-            
-            if (session && session.user) {
-                // Get user profile
-                let profile = null;
-                try {
-                    profile = await window.SupabaseProfile.getProfile(session.user.id);
-                } catch (profileError) {
-                    // Profile might not exist yet
-                    console.log('Profile not found');
-                }
+        // If we have a magic link token, use auth state change listener instead of timeouts
+        if (accessToken && type === 'email' && window.supabaseClient) {
+            // Use auth state change listener to wait for Supabase to process the token
+            await new Promise((resolve) => {
+                let subscription = null;
+                let timeoutId = null;
                 
-                AuthState.user = {
-                    id: session.user.id,
-                    email: session.user.email,
-                    ...profile
-                };
-                localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+                // Set up timeout first
+                timeoutId = setTimeout(() => {
+                    if (subscription) {
+                        subscription.unsubscribe();
+                    }
+                    resolve(); // Timeout - continue with normal flow
+                }, MAGIC_LINK_AUTH_TIMEOUT);
                 
-                // Reload signupData to make sure we have it
-                loadSignupDataFromStorage();
+                // Set up auth state change listener using Supabase client directly to get subscription
+                const authStateResult = window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                    if (event === 'SIGNED_IN' && session) {
+                        if (timeoutId) clearTimeout(timeoutId);
+                        if (subscription) subscription.unsubscribe();
+                        
+                        // Clear hash after processing
+                        window.location.hash = '';
+                        
+                        // Handle the session
+                        const sessionData = await handleUserSession(session);
+                        if (sessionData) {
+                            const { profile } = sessionData;
+                            
+                            // If user just verified and has signup data, navigate to complete profile
+                            if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
+                                prefillProfileForm();
+                                showToast('Email verified successfully!');
+                                goToScreen('complete-profile');
+                            } else if (profile) {
+                                // User has profile, go to home
+                                showToast('Welcome back!');
+                                goToScreen('home');
+                            }
+                        }
+                        resolve();
+                    } else if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+                        // Handle other auth events if needed
+                        if (timeoutId) clearTimeout(timeoutId);
+                        if (subscription) subscription.unsubscribe();
+                        resolve();
+                    }
+                });
                 
-                // If user just verified and has signup data, navigate to complete profile
-                if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
-                    prefillProfileForm();
-                    showToast('Email verified successfully!');
-                    goToScreen('complete-profile');
-                    return; // Don't continue with normal flow
-                } else if (profile) {
-                    // User has profile, go to home
-                    goToScreen('home');
-                    return;
-                }
+                // Extract subscription from result (Supabase returns { data: { subscription } })
+                subscription = authStateResult?.data?.subscription || null;
+            });
+            
+            // If we've handled the magic link, return early
+            if (window.location.hash === '') {
+                return;
             }
         }
         
@@ -622,32 +729,15 @@ async function checkAuth() {
         const session = await window.SupabaseAuth.getSession();
         
         if (session && session.user) {
-            // Get user profile
-            let profile = null;
-            try {
-                profile = await window.SupabaseProfile.getProfile(session.user.id);
-            } catch (profileError) {
-                // Profile might not exist yet
-                console.log('Profile not found');
-            }
-            
-            AuthState.user = {
-                id: session.user.id,
-                email: session.user.email,
-                ...profile
-            };
-            localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
-            
-            // If user already has a profile, clear any stale signupData
-            if (profile) {
-                localStorage.removeItem('gogobus_signupData');
-                AuthState.signupData = {};
-            }
-            
-            // If user has signup data but no profile, they need to complete profile
-            if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
-                prefillProfileForm();
-                goToScreen('complete-profile');
+            const sessionData = await handleUserSession(session);
+            if (sessionData) {
+                const { profile } = sessionData;
+                
+                // If user has signup data but no profile, they need to complete profile
+                if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
+                    prefillProfileForm();
+                    goToScreen('complete-profile');
+                }
             }
         } else {
             // Fallback to localStorage
@@ -681,26 +771,11 @@ async function handleAuthSuccess(session) {
     if (!session || !session.user) return;
     
     try {
-        // Load signupData from localStorage if not already in memory
-        if (!AuthState.signupData || Object.keys(AuthState.signupData).length === 0) {
-            loadSignupDataFromStorage();
-        }
+        // Use the shared session handler
+        const sessionData = await handleUserSession(session);
+        if (!sessionData) return;
         
-        // Get user profile if exists
-        let profile = null;
-        try {
-            profile = await window.SupabaseProfile.getProfile(session.user.id);
-        } catch (profileError) {
-            // Profile might not exist yet
-            console.log('Profile not found');
-        }
-        
-        AuthState.user = {
-            id: session.user.id,
-            email: session.user.email,
-            ...profile
-        };
-        localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+        const { profile } = sessionData;
         
         // If user came from signup and has signup data, go to complete profile
         if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
