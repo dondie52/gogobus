@@ -115,12 +115,36 @@ function handleSwipe() {
 // SPLASH SCREEN
 // ===================
 function initSplashScreen() {
+    // Check if we're in the middle of email verification
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
+    const type = hashParams.get('type');
+    
+    // If email verification is in progress, don't auto-navigate
+    // Let checkAuth handle the navigation
+    if (accessToken && type === 'email') {
+        console.log('Email verification detected, waiting for auth check...');
+        return; // Don't auto-navigate, let auth.js handle it
+    }
+    
     // Check if user has seen onboarding before
     const hasSeenOnboarding = localStorage.getItem('gogobus_onboarding_complete');
     const lastScreen = localStorage.getItem('gogobus_last_screen');
     
     // Auto-transition from splash after 2.5 seconds
     setTimeout(() => {
+        // Double-check we're not in email verification (auth might have cleared hash)
+        const currentHash = new URLSearchParams(window.location.hash.substring(1));
+        const currentToken = currentHash.get('access_token');
+        if (currentToken && currentHash.get('type') === 'email') {
+            return; // Still verifying, don't navigate
+        }
+        
+        // Check if auth check already navigated us away
+        if (App.currentScreen !== 'splash-screen') {
+            return; // Already navigated
+        }
+        
         if (hasSeenOnboarding === 'true') {
             // Skip to get-started if already completed onboarding
             goToScreen('get-started');
