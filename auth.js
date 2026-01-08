@@ -80,8 +80,21 @@ async function handleLogin(event) {
         goToScreen('home');
     } catch (error) {
         console.error('Login error:', error);
-        showToast(error.message || 'Login failed. Please check your credentials.');
-        showInputError(form.password, error.message || 'Invalid credentials');
+        
+        // Provide more helpful error messages
+        let errorMessage = 'Login failed. Please check your credentials.';
+        if (error.message) {
+            if (error.message.includes('Email not confirmed') || error.message.includes('not confirmed')) {
+                errorMessage = 'Please verify your email address before logging in. Check your inbox for the confirmation link.';
+            } else if (error.message.includes('Invalid login credentials') || error.message.includes('invalid')) {
+                errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+            } else {
+                errorMessage = error.message;
+            }
+        }
+        
+        showToast(errorMessage);
+        showInputError(form.password, errorMessage);
     } finally {
         setButtonLoading(form.querySelector('.btn-submit'), false);
     }
@@ -128,17 +141,23 @@ async function handleSignup(event) {
     setButtonLoading(form.querySelector('.btn-submit'), true);
     
     try {
-        // Send magic link to email (Supabase signInWithOtp sends a link by default)
-        await sendOTPCode(email);
+        // Create user account with email and password
+        // Supabase will automatically send an email confirmation link
+        const { data, error } = await window.SupabaseAuth.signUp(email, password, {
+            full_name: fullName,
+            phone: phone
+        });
+        
+        if (error) throw error;
         
         // Update verification screen with email
         document.getElementById('otp-email-display').textContent = email;
         
-        showToast('Verification link sent to your email!');
+        showToast('Account created! Please check your email to verify your account.');
         goToScreen('otp-verification');
     } catch (error) {
         console.error('Signup error:', error);
-        showToast(error.message || 'Failed to send verification link. Please try again.');
+        showToast(error.message || 'Failed to create account. Please try again.');
     } finally {
         setButtonLoading(form.querySelector('.btn-submit'), false);
     }
@@ -545,13 +564,61 @@ async function checkAuth() {
         // Handle magic link redirect (check URL hash for access_token)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
+        const type = hashParams.get('type');
         
-        if (accessToken) {
-            // User just clicked magic link, clear hash
+        // If we have a magic link token, wait for Supabase to process it
+        if (accessToken && type === 'email') {
+            // Don't clear hash yet - let Supabase process it first
+            // Wait a moment for Supabase to establish the session
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Now check for session (Supabase should have processed the token)
+            let session = await window.SupabaseAuth.getSession();
+            
+            // If still no session, wait a bit more
+            if (!session) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                session = await window.SupabaseAuth.getSession();
+            }
+            
+            // Clear hash after processing
             window.location.hash = '';
+            
+            if (session && session.user) {
+                // Get user profile
+                let profile = null;
+                try {
+                    profile = await window.SupabaseProfile.getProfile(session.user.id);
+                } catch (profileError) {
+                    // Profile might not exist yet
+                    console.log('Profile not found');
+                }
+                
+                AuthState.user = {
+                    id: session.user.id,
+                    email: session.user.email,
+                    ...profile
+                };
+                localStorage.setItem('gogobus_user', JSON.stringify(AuthState.user));
+                
+                // Reload signupData to make sure we have it
+                loadSignupDataFromStorage();
+                
+                // If user just verified and has signup data, navigate to complete profile
+                if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
+                    prefillProfileForm();
+                    showToast('Email verified successfully!');
+                    goToScreen('complete-profile');
+                    return; // Don't continue with normal flow
+                } else if (profile) {
+                    // User has profile, go to home
+                    goToScreen('home');
+                    return;
+                }
+            }
         }
         
-        // Check Supabase session
+        // Normal session check (for returning users)
         const session = await window.SupabaseAuth.getSession();
         
         if (session && session.user) {
@@ -577,8 +644,8 @@ async function checkAuth() {
                 AuthState.signupData = {};
             }
             
-            // If user just verified and has signup data, navigate to complete profile
-            if (accessToken && AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
+            // If user has signup data but no profile, they need to complete profile
+            if (AuthState.signupData && Object.keys(AuthState.signupData).length > 0 && !profile) {
                 prefillProfileForm();
                 goToScreen('complete-profile');
             }
@@ -640,9 +707,15 @@ async function handleAuthSuccess(session) {
             prefillProfileForm();
             showToast('Email verified successfully!');
             goToScreen('complete-profile');
-        } else {
+        } else if (profile) {
+            // User has profile, go to home
             showToast('Welcome back!');
             goToScreen('home');
+        } else {
+            // User is signed in but no profile and no signup data
+            // This shouldn't happen, but just in case
+            showToast('Welcome! Please complete your profile.');
+            goToScreen('complete-profile');
         }
     } catch (error) {
         console.error('Error handling auth success:', error);

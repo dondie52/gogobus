@@ -34,7 +34,8 @@ const SupabaseAuth = {
             email,
             password,
             options: {
-                data: metadata // { full_name, phone }
+                data: metadata, // { full_name, phone }
+                emailRedirectTo: BASE_URL // Redirect to app after email confirmation
             }
         });
         
