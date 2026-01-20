@@ -106,7 +106,6 @@ const Home = () => {
 
   useEffect(() => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:105',message:'Home component mount/update',data:{hasUser:!!user,userId:user?.id,currentPath:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
     const loadUserProfile = async () => {
       if (user?.id) {
@@ -115,7 +114,6 @@ const Home = () => {
           setUserProfile(profile);
         } catch (error) {
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:112',message:'Error loading user profile',data:{errorMessage:error?.message,userId:user?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
           // #endregion
           logError('Failed to load user profile', error);
         }
@@ -126,7 +124,6 @@ const Home = () => {
     loadUserProfile();
     return () => {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:122',message:'Home component unmounting',data:{currentPath:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
     };
   }, [user]);
@@ -149,7 +146,6 @@ const Home = () => {
 
   const handleSearch = (searchData) => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:137',message:'handleSearch called',data:{searchData,currentPath:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
     try {
       const params = new URLSearchParams({
@@ -161,7 +157,6 @@ const Home = () => {
       navigate(`/search?${params.toString()}`);
     } catch (error) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:146',message:'Error in handleSearch',data:{errorMessage:error?.message,searchData},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
       // #endregion
       throw error;
     }

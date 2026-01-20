@@ -28,13 +28,11 @@ export const initTokenRefresh = () => {
   refreshTimer = setInterval(async () => {
     try {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:28',message:'Token refresh check starting',data:{url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session || !session.expires_at) {
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:32',message:'No session or expires_at, skipping refresh',data:{hasSession:!!session,hasExpiresAt:!!session?.expires_at,url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
         // #endregion
         return;
       }
@@ -44,13 +42,11 @@ export const initTokenRefresh = () => {
       const timeUntilExpiry = expiresAt - now;
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:38',message:'Token expiry check',data:{expiresAt:expiresAt,now:now,timeUntilExpiry:timeUntilExpiry,shouldRefresh:timeUntilExpiry<TOKEN_REFRESH_BUFFER,url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
 
       // Refresh if token expires within buffer time
       if (timeUntilExpiry < TOKEN_REFRESH_BUFFER) {
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:42',message:'Refreshing token - expires soon',data:{timeUntilExpiry:timeUntilExpiry,url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
         // #endregion
         logInfo('[Security] Refreshing token (expires soon)');
         
@@ -58,7 +54,6 @@ export const initTokenRefresh = () => {
         
         if (error) {
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:47',message:'Token refresh failed',data:{error:error.message,errorCode:error.status,url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
           // #endregion
           logError('[Security] Token refresh failed', error);
           // If refresh fails, user will need to re-authenticate
@@ -66,7 +61,6 @@ export const initTokenRefresh = () => {
         }
 
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:52',message:'Token refreshed successfully',data:{hasNewSession:!!data?.session,newExpiresAt:data?.session?.expires_at,url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
         // #endregion
         logInfo('[Security] Token refreshed successfully');
         
@@ -75,7 +69,6 @@ export const initTokenRefresh = () => {
       }
     } catch (error) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'security.js:57',message:'Token refresh check error',data:{error:error.message,errorStack:error.stack?.substring(0,500),url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
       // #endregion
       logError('[Security] Token refresh error', error);
     }

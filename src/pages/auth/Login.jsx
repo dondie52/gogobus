@@ -62,12 +62,10 @@ const Login = () => {
     setLoading(true);
     try {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:63',message:'Login attempt started',data:{email:email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
       await login(email, password);
       
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:66',message:'Login successful, starting admin check',data:{email:email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
       
       // Track login conversion
@@ -86,46 +84,38 @@ const Login = () => {
       setTimeout(async () => {
         try {
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:81',message:'Admin check timeout started',data:{email:email,timeoutMs:1200},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
           // #endregion
           const { authService } = await import('../../services/authService');
           const authUser = await authService.getUser();
           
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:85',message:'Auth user retrieved',data:{userId:authUser?.id,email:authUser?.email,hasId:!!authUser?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
           // #endregion
           
           if (authUser?.id) {
             const profile = await profileService.getProfile(authUser.id);
             
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:88',message:'Profile retrieved in Login',data:{profileExists:!!profile,role:profile?.role,isAdmin:profile?.role==='admin',profileData:profile?{id:profile.id,email:profile.email,role:profile.role}:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
             // #endregion
             
             if (profile?.role === 'admin') {
               // #region agent log
-              fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:91',message:'Admin role detected, navigating to /admin',data:{email:email,role:profile.role},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
               // #endregion
               navigate('/admin', { replace: true });
               return;
             } else {
               // #region agent log
-              fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:95',message:'Not admin, navigating to /home',data:{email:email,role:profile?.role||'null'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
               // #endregion
             }
           } else {
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:99',message:'No auth user ID, navigating to /home',data:{email:email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
             // #endregion
           }
         } catch (err) {
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:103',message:'Error checking admin status',data:{email:email,error:err.message,errorStack:err.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
           // #endregion
           logError('Error checking admin status', err);
         }
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Login.jsx:106',message:'Fallback navigation to /home',data:{email:email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
         // #endregion
         navigate('/home', { replace: true });
       }, 1200);

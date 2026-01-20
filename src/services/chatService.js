@@ -53,7 +53,6 @@ const chatService = {
    */
   async getAllConversations(filters = {}) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:54',message:'getAllConversations called',data:{filters},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     try {
       let query = supabase
@@ -66,19 +65,16 @@ const chatService = {
       }
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:69',message:'Before Supabase query execution',data:{filterStatus:filters.status},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
 
       const { data, error } = await query;
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:72',message:'Supabase query result',data:{hasData:!!data,dataLength:data?.length||0,hasError:!!error,errorMessage:error?.message,errorCode:error?.code,errorDetails:error?.details,firstItem:data?.[0]||null},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
       // #endregion
 
       if (error) {
         logError('Error fetching conversations', error);
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:75',message:'Query error detected',data:{errorMessage:error.message,errorCode:error.code,errorDetails:error.details},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
         // #endregion
         return { data: null, error };
       }
@@ -91,7 +87,6 @@ const chatService = {
       const userIds = [...new Set(data.map(conv => conv.user_id))];
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:87',message:'Fetching profiles',data:{userIds,userIdsCount:userIds.length},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'F'})}).catch(()=>{});
       // #endregion
 
       // Fetch profiles for all users
@@ -101,7 +96,6 @@ const chatService = {
         .in('id', userIds);
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:95',message:'Profile query result',data:{hasProfiles:!!profiles,profilesCount:profiles?.length||0,hasError:!!profilesError,errorMessage:profilesError?.message,errorCode:profilesError?.code,profiles:profiles||[]},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'F'})}).catch(()=>{});
       // #endregion
 
       if (profilesError) {
@@ -112,7 +106,6 @@ const chatService = {
       const profileMap = new Map((profiles || []).map(p => [p.id, p]));
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:95',message:'Before processing unread counts',data:{conversationsCount:data?.length||0,profilesCount:profiles?.length||0},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'D'})}).catch(()=>{});
       // #endregion
 
       // Get unread counts and attach profiles for each conversation
@@ -134,14 +127,12 @@ const chatService = {
       );
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:112',message:'getAllConversations returning',data:{conversationsCount:conversationsWithUnread?.length||0,firstConversation:conversationsWithUnread?.[0]||null},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
       // #endregion
 
       return { data: conversationsWithUnread, error: null };
     } catch (error) {
       logError('Error in getAllConversations', error);
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'chatService.js:116',message:'Exception caught in getAllConversations',data:{errorMessage:error.message,errorStack:error.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
       // #endregion
       return { data: null, error };
     }

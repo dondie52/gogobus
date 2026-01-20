@@ -10,7 +10,6 @@ export const profileService = {
    */
   async getProfile(userId) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'profileService.js:12',message:'getProfile called',data:{userId:userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     const { data, error } = await supabase
       .from('profiles')
@@ -19,7 +18,6 @@ export const profileService = {
       .single();
 
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'profileService.js:19',message:'getProfile result',data:{userId:userId,hasData:!!data,hasError:!!error,errorCode:error?.code,errorMessage:error?.message,role:data?.role,email:data?.email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
 
     if (error && error.code !== 'PGRST116') throw error;

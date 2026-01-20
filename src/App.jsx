@@ -51,7 +51,6 @@ function PageViewTracker() {
 
   useEffect(() => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:54',message:'Route changed in PageViewTracker',data:{pathname:location.pathname,search:location.search,state:location.state,fullUrl:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
     trackPageView(location.pathname + location.search);
   }, [location]);
@@ -59,7 +58,6 @@ function PageViewTracker() {
   useEffect(() => {
     // #region agent log
     const handlePopState = (event) => {
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:64',message:'Browser back/forward button pressed',data:{currentPath:window.location.pathname,state:event.state},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -73,12 +71,10 @@ function App() {
   // Initialize performance monitoring on mount
   useEffect(() => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:72',message:'App component mounted',data:{url:window.location.href,memoryUsage:performance.memory?performance.memory.usedJSHeapSize:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
     initPerformanceMonitoring();
     return () => {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:76',message:'App component unmounting',data:{url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
       // #endregion
     };
   }, []);
@@ -87,10 +83,8 @@ function App() {
   useEffect(() => {
     // #region agent log
     const handleVisibilityChange = () => {
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:82',message:'Page visibility changed',data:{hidden:document.hidden,url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     };
     const handleBeforeUnload = () => {
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:85',message:'Before unload event',data:{url:window.location.href},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleBeforeUnload);

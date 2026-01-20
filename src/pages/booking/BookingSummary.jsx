@@ -12,7 +12,6 @@ const BookingSummary = () => {
   
   // #region agent log
   React.useEffect(() => {
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:15',message:'Component mounted/updated',data:{currentPath:location.pathname,hasRoute:!!selectedRoute,seatsCount:selectedSeats?.length,passengersCount:passengerDetails?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
   }, [location.pathname, selectedRoute, selectedSeats, passengerDetails]);
   // #endregion
 
@@ -27,7 +26,6 @@ const BookingSummary = () => {
 
   if (!selectedRoute || !selectedSeats || selectedSeats.length === 0) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:24',message:'Redirecting: missing route/seats',data:{hasRoute:!!selectedRoute,seatsCount:selectedSeats?.length,redirectTo:'/booking/seat-selection'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
     navigate('/booking/seat-selection');
     return null;
@@ -36,7 +34,6 @@ const BookingSummary = () => {
   // Redirect if passenger details are missing
   if (!passengerDetails || passengerDetails.length === 0 || passengerDetails.length !== selectedSeats.length) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:31',message:'Redirecting: missing passenger details',data:{passengersCount:passengerDetails?.length,seatsCount:selectedSeats?.length,redirectTo:'/booking/passenger-details'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
     navigate('/booking/passenger-details');
     return null;
@@ -49,19 +46,15 @@ const BookingSummary = () => {
       <div className={styles.bookingHeader}>
         <button className={styles.backButton} onClick={(e) => {
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:40',message:'Back button clicked',data:{currentPath:location.pathname,eventType:e?.type,defaultPrevented:e?.defaultPrevented},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
           // #endregion
           try {
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:44',message:'Before navigate call',data:{targetPath:'/home',currentPath:location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});
             // #endregion
             navigate('/home');
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:47',message:'After navigate call',data:{targetPath:'/home'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'B'})}).catch(()=>{});
             // #endregion
           } catch (err) {
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:50',message:'Error in navigate',data:{errorMessage:err?.message,errorStack:err?.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
             // #endregion
             console.error('Navigation error:', err);
           }

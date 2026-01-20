@@ -15,12 +15,10 @@ const PopularRoutes = ({ onRouteSelect, loading: externalLoading }) => {
 
   useEffect(() => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PopularRoutes.jsx:16',message:'PopularRoutes useEffect mount',data:{routesCount:POPULAR_ROUTES.length,hasOnRouteSelect:!!onRouteSelect},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
     // Simulate loading
     const timer = setTimeout(() => {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PopularRoutes.jsx:21',message:'Setting routes in PopularRoutes',data:{routesCount:POPULAR_ROUTES.length,routes:POPULAR_ROUTES},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
       setRoutes(POPULAR_ROUTES);
       setLoading(false);
@@ -28,7 +26,6 @@ const PopularRoutes = ({ onRouteSelect, loading: externalLoading }) => {
 
     return () => {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PopularRoutes.jsx:27',message:'PopularRoutes cleanup/unmount',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
       clearTimeout(timer);
     };
@@ -36,7 +33,6 @@ const PopularRoutes = ({ onRouteSelect, loading: externalLoading }) => {
 
   const handleRouteClick = (route) => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PopularRoutes.jsx:30',message:'Route clicked in PopularRoutes',data:{route,hasOnRouteSelect:!!onRouteSelect},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -48,7 +44,6 @@ const PopularRoutes = ({ onRouteSelect, loading: externalLoading }) => {
       });
     } catch (error) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PopularRoutes.jsx:37',message:'Error in handleRouteClick',data:{errorMessage:error?.message,route},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
       throw error;
     }
@@ -82,7 +77,6 @@ const PopularRoutes = ({ onRouteSelect, loading: externalLoading }) => {
           {routes.map((route, index) => {
             // #region agent log
             if (!route || !route.origin || !route.destination || route.price === undefined) {
-              fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PopularRoutes.jsx:64',message:'Invalid route data detected',data:{route,index,routesLength:routes.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
             }
             // #endregion
             return (

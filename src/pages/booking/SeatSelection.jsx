@@ -71,17 +71,14 @@ export default function SeatSelection() {
   // Fetch trip and seats
   useEffect(() => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:70',message:'SeatSelection mounted',data:{tripId:tripId,passengersNeeded:passengersNeeded,isAuthenticated:isAuthenticated,isEmailVerified:isEmailVerified,userId:user?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
     const fetchData = async () => {
       setLoading(true);
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:73',message:'Fetching trip data',data:{tripId:tripId,hasTripId:!!tripId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
       try {
         const { data: tripData, error: tripError } = await bookingService.getTripById(tripId);
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:76',message:'Trip data received',data:{tripId:tripId,hasTripData:!!tripData,hasError:!!tripError,errorMessage:tripError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
         if (tripError) throw tripError;
         
@@ -89,7 +86,6 @@ export default function SeatSelection() {
         setSeats(tripData?.seats || []);
       } catch (err) {
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:81',message:'Error fetching trip',data:{tripId:tripId,errorMessage:err?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
         const { logError } = await import('../../utils/logger');
         logError('Fetch error in SeatSelection', err);
@@ -103,7 +99,6 @@ export default function SeatSelection() {
       fetchData();
     } else {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:90',message:'No tripId provided',data:{tripId:tripId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
     }
   }, [tripId]);
@@ -137,11 +132,9 @@ export default function SeatSelection() {
   // Continue to passenger details
   const handleContinue = () => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:136',message:'handleContinue called',data:{selectedSeatsLength:selectedSeats.length,passengersNeeded:passengersNeeded,isAuthenticated:isAuthenticated,isEmailVerified:isEmailVerified,tripId:tripId,selectedSeats:selectedSeats.map(s=>({id:s.id,seat_number:s.seat_number}))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
     if (selectedSeats.length < passengersNeeded) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:139',message:'Early return: insufficient seats',data:{selectedSeatsLength:selectedSeats.length,passengersNeeded:passengersNeeded},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
       return;
     }
@@ -149,7 +142,6 @@ export default function SeatSelection() {
     // Check if user is authenticated
     if (!isAuthenticated) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:145',message:'Redirecting to login',data:{isAuthenticated:isAuthenticated},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
       // #endregion
       navigate('/login', { state: { returnTo: `/booking/seats/${tripId}?passengers=${passengersNeeded}` } });
       return;
@@ -158,7 +150,6 @@ export default function SeatSelection() {
     // Check if email is verified
     if (!isEmailVerified) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:151',message:'Showing email verification modal',data:{isEmailVerified:isEmailVerified},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
       // #endregion
       setShowEmailVerificationModal(true);
       return;
@@ -168,7 +159,6 @@ export default function SeatSelection() {
     try {
       const seatNumbers = selectedSeats.map(s => s.seat_number);
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:159',message:'Before setting context and navigation',data:{seatNumbers:seatNumbers,tripId:tripId,hasTrip:!!trip},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
       // Set selected seats in context (as seat numbers, matching PassengerDetails expectations)
       setContextSelectedSeats(seatNumbers);
@@ -185,21 +175,17 @@ export default function SeatSelection() {
         });
       }
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:185',message:'Context set, navigating to passenger details',data:{seatNumbers:seatNumbers,seatNumbersLength:seatNumbers.length,hasTrip:!!trip,navigationPath:'/booking/passenger-details'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
       // Use setTimeout to ensure context update propagates before navigation
       setTimeout(() => {
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:189',message:'Executing navigation after context update',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
         // #endregion
         navigate('/booking/passenger-details');
       }, 0);
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:174',message:'After navigation call',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
       // #endregion
     } catch (err) {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:176',message:'Error in handleContinue',data:{errorMessage:err?.message,errorStack:err?.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
       // #endregion
       console.error('Error in handleContinue:', err);
     }
@@ -435,7 +421,6 @@ export default function SeatSelection() {
           className={styles.continueBtn}
           onClick={(e) => {
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SeatSelection.jsx:383',message:'Continue button clicked',data:{selectedSeatsLength:selectedSeats.length,passengersNeeded:passengersNeeded,isDisabled:selectedSeats.length < passengersNeeded,eventType:e?.type,eventTarget:e?.target?.tagName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
             // #endregion
             handleContinue();
           }}

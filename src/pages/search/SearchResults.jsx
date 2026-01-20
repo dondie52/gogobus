@@ -114,12 +114,10 @@ export default function SearchResults() {
 
         if (fetchError) throw fetchError;
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:108',message:'Trips loaded',data:{tripsCount:data?.length || 0,tripIds:data?.map(t=>t?.id).filter(Boolean),tripsWithIds:data?.filter(t=>t?.id).length,tripsWithoutIds:data?.filter(t=>!t?.id).length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
         setTrips(data || []);
       } catch (err) {
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:117',message:'Search error occurred',data:{errorMessage:err?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
         logError('Search error', err);
         setError(err.message || 'Failed to search trips');
@@ -174,15 +172,12 @@ export default function SearchResults() {
   // Handle trip selection
   const handleSelectTrip = (trip) => {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:169',message:'handleSelectTrip called',data:{tripId:trip?.id,tripIdType:typeof trip?.id,passengers:passengers,passengersType:typeof passengers,availableSeats:trip?.available_seats,isDisabled:trip?.available_seats < passengers},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:170',message:'Before navigation',data:{tripId:trip?.id,passengers:passengers,navigationUrl:`/booking/seats/${trip?.id}?passengers=${passengers}`,hasTripId:!!trip?.id,hasPassengers:!!passengers},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     // Navigate to seat selection with trip ID
     navigate(`/booking/seats/${trip.id}?passengers=${passengers}`);
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:172',message:'After navigate call',data:{tripId:trip?.id,passengers:passengers},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
   };
 
@@ -197,7 +192,6 @@ export default function SearchResults() {
           className={styles.backBtn} 
           onClick={(e) => {
             // #region agent log
-            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:196',message:'Back button clicked',data:{currentPath:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
             // #endregion
             // Go back in history, or to home if no history
             if (window.history.length > 1) {
@@ -280,7 +274,6 @@ export default function SearchResults() {
             {sortedTrips.map(trip => {
               // #region agent log
               const isButtonDisabled = trip.available_seats < passengers;
-              fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:252',message:'Rendering trip card',data:{tripId:trip?.id,availableSeats:trip?.available_seats,passengers:passengers,isButtonDisabled:isButtonDisabled,hasTripId:!!trip?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
               // #endregion
               return (
               <div key={trip.id} className={styles.tripCard}>
@@ -352,7 +345,6 @@ export default function SearchResults() {
                       data-trip-id={trip.id}
                       onClick={(e) => {
                         // #region agent log
-                        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SearchResults.jsx:349',message:'Select button onClick handler called',data:{tripId:trip?.id,availableSeats:trip?.available_seats,passengers:passengers,isDisabled:trip?.available_seats < passengers},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
                         // #endregion
                         e.stopPropagation();
                         handleSelectTrip(trip);

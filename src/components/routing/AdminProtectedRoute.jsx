@@ -14,7 +14,6 @@ const AdminProtectedRoute = ({ children }) => {
 
   // #region agent log
   React.useEffect(() => {
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:15',message:'AdminProtectedRoute render',data:{hasUser:!!user,userId:user?.id,userEmail:user?.email,hasProfile:!!userProfile,profileRole:userProfile?.role,isAdmin:isAdmin,loading:loading,profileLoadTimeout:profileLoadTimeout},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
   }, [user, userProfile, isAdmin, loading, profileLoadTimeout]);
   // #endregion
 
@@ -25,7 +24,6 @@ const AdminProtectedRoute = ({ children }) => {
       const timeoutId = setTimeout(() => {
         if (userProfile === null) {
           // #region agent log
-          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:23',message:'Profile load timeout triggered',data:{userId:user?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
           // #endregion
           setProfileLoadTimeout(true);
         }
@@ -39,7 +37,6 @@ const AdminProtectedRoute = ({ children }) => {
 
   if (loading) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:35',message:'AdminProtectedRoute: showing loading spinner',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -51,7 +48,6 @@ const AdminProtectedRoute = ({ children }) => {
   // Redirect to login if not authenticated
   if (!user) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:43',message:'AdminProtectedRoute: redirecting to login (no user)',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
     return <Navigate to="/login" replace />;
   }
@@ -63,7 +59,6 @@ const AdminProtectedRoute = ({ children }) => {
   // We need to distinguish between these cases
   if (userProfile === null && user && !profileLoadTimeout) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:52',message:'AdminProtectedRoute: waiting for profile to load',data:{userId:user?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     // Wait a bit for profile to load, but show loading state
     return (
@@ -77,7 +72,6 @@ const AdminProtectedRoute = ({ children }) => {
   // If timeout occurred, redirect (profile likely doesn't exist)
   if (profileLoadTimeout && userProfile === null) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:63',message:'AdminProtectedRoute: redirecting to /home (profile timeout)',data:{userId:user?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     return <Navigate to="/home" replace />;
   }
@@ -85,7 +79,6 @@ const AdminProtectedRoute = ({ children }) => {
   // If profile exists but role is not admin, redirect
   if (userProfile && userProfile.role !== 'admin') {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:68',message:'AdminProtectedRoute: redirecting to /home (not admin role)',data:{userId:user?.id,role:userProfile.role},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
     logWarn('User is not admin. Role:', userProfile.role);
     return <Navigate to="/home" replace />;
@@ -94,14 +87,12 @@ const AdminProtectedRoute = ({ children }) => {
   // Final check using isAdmin flag
   if (!isAdmin) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:75',message:'AdminProtectedRoute: redirecting to /home (isAdmin check failed)',data:{userId:user?.id,userProfile:userProfile?{role:userProfile.role}:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
     logWarn('isAdmin check failed. userProfile:', userProfile);
     return <Navigate to="/home" replace />;
   }
 
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminProtectedRoute.jsx:80',message:'AdminProtectedRoute: allowing access',data:{userId:user?.id,role:userProfile?.role},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
   // #endregion
   return children;
 };

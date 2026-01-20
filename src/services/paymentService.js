@@ -172,13 +172,11 @@ export const createDPOPayment = async (paymentData) => {
   } = paymentData;
 
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:163',message:'createDPOPayment entry',data:{bookingId:bookingId,isValidUUID:validateUUID(bookingId),amount:amount},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
   // #endregion
 
   // Validate inputs
   if (!bookingId || !validateUUID(bookingId)) {
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:175',message:'Invalid bookingId validation',data:{bookingId:bookingId,isValidUUID:validateUUID(bookingId)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
     // #endregion
     throw new Error('Invalid booking ID');
   }
@@ -198,7 +196,6 @@ export const createDPOPayment = async (paymentData) => {
     // #region agent log
     const { data: sessionData } = await supabase.auth.getSession();
     const { data: bookingCheck } = await supabase.from('bookings').select('id, user_id').eq('id', bookingId).single();
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:190',message:'Before payment insert - auth and booking check',data:{authUid:sessionData?.session?.user?.id,bookingExists:!!bookingCheck,bookingUserId:bookingCheck?.user_id,bookingId:bookingId,userIdMatches:sessionData?.session?.user?.id === bookingCheck?.user_id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
 
     // Sanitize customer data
@@ -228,7 +225,6 @@ export const createDPOPayment = async (paymentData) => {
       .single();
 
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:217',message:'Payment insert result',data:{paymentCreated:!!payment,error:dbError?.message,errorCode:dbError?.code,errorDetails:dbError?.details,errorHint:dbError?.hint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
 
     if (dbError) throw dbError;
@@ -627,7 +623,6 @@ export const createOrangeMoneyPayment = async (paymentData) => {
   } = paymentData;
 
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:603',message:'createOrangeMoneyPayment entry',data:{bookingId:bookingId,isValidUUID:validateUUID(bookingId),amount:amount},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
   // #endregion
 
   const transactionRef = generateTransactionRef();
@@ -636,7 +631,6 @@ export const createOrangeMoneyPayment = async (paymentData) => {
     // #region agent log
     const { data: sessionData } = await supabase.auth.getSession();
     const { data: bookingCheck } = await supabase.from('bookings').select('id, user_id').eq('id', bookingId).single();
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:614',message:'Before orange payment insert - auth and booking check',data:{authUid:sessionData?.session?.user?.id,bookingExists:!!bookingCheck,bookingUserId:bookingCheck?.user_id,bookingId:bookingId,userIdMatches:sessionData?.session?.user?.id === bookingCheck?.user_id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
 
     // Create payment record
@@ -658,7 +652,6 @@ export const createOrangeMoneyPayment = async (paymentData) => {
       .single();
 
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:633',message:'Orange payment insert result',data:{paymentCreated:!!payment,error:dbError?.message,errorCode:dbError?.code,errorDetails:dbError?.details,errorHint:dbError?.hint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
 
     if (dbError) throw dbError;
@@ -1025,7 +1018,6 @@ export const createManualPayment = async (paymentData) => {
   } = paymentData;
 
   // #region agent log
-  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:986',message:'createManualPayment entry',data:{bookingId:bookingId,isValidUUID:validateUUID(bookingId),amount:amount,paymentMethod:paymentMethod},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
   // #endregion
 
   const transactionRef = generateTransactionRef();
@@ -1034,7 +1026,6 @@ export const createManualPayment = async (paymentData) => {
     // #region agent log
     const { data: sessionData } = await supabase.auth.getSession();
     const { data: bookingCheck } = await supabase.from('bookings').select('id, user_id').eq('id', bookingId).single();
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:998',message:'Before manual payment insert - auth and booking check',data:{authUid:sessionData?.session?.user?.id,bookingExists:!!bookingCheck,bookingUserId:bookingCheck?.user_id,bookingId:bookingId,userIdMatches:sessionData?.session?.user?.id === bookingCheck?.user_id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
 
     const { data: payment, error } = await supabase
@@ -1055,7 +1046,6 @@ export const createManualPayment = async (paymentData) => {
       .single();
 
     // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'paymentService.js:1016',message:'Manual payment insert result',data:{paymentCreated:!!payment,error:error?.message,errorCode:error?.code,errorDetails:error?.details,errorHint:error?.hint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
     // #endregion
 
     if (error) throw error;

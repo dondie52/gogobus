@@ -178,14 +178,12 @@ export default function Payment() {
 
     try {
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:174',message:'handlePayment called',data:{hasBooking:!!booking,selectedRouteId:selectedRoute?.id,userId:user?.id,selectedSeats:selectedSeats,passengerDetailsLength:passengerDetails?.length,selectedMethod:selectedMethod,amount:priceBreakdown?.total},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
 
       // Create booking first if it doesn't exist
       let bookingId = booking?.id;
       if (!bookingId && selectedRoute?.id && user?.id && selectedSeats?.length > 0 && passengerDetails?.length > 0) {
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:180',message:'Creating booking before payment',data:{scheduleId:selectedRoute.id,userId:user.id,seatsCount:selectedSeats.length,passengersCount:passengerDetails.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
 
         const firstPassenger = passengerDetails[0];
@@ -209,7 +207,6 @@ export default function Payment() {
         bookingId = createdBooking.id;
 
         // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:200',message:'Booking created successfully',data:{bookingId:bookingId,bookingRef:createdBooking.booking_ref},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
       }
 
@@ -229,7 +226,6 @@ export default function Payment() {
       };
 
       // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:212',message:'Initiating payment with bookingId',data:{bookingId:paymentData.bookingId,amount:paymentData.amount,paymentMethod:paymentData.paymentMethod},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
       // #endregion
 
       const result = await paymentService.initiatePayment(paymentData);
