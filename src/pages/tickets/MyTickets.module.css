@@ -1,0 +1,87 @@
+.myTicketsScreen {
+  width: 100%;
+  min-height: 100vh;
+  background: #F7F7F7;
+}
+
+.myTicketsHeader {
+  background: white;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.myTicketsHeader h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.errorMessage {
+  background: #FFEBEE;
+  color: #C62828;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.emptyState h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 0.5rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.emptyState p {
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ticketsList {
+  padding: 1rem;
+}
+
+/* Dark mode */
+:global(.dark-mode) .myTicketsScreen {
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .myTicketsHeader {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .myTicketsHeader h1 {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .emptyState h3 {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .emptyState p {
+  color: #999;
+}

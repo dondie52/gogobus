@@ -1,0 +1,67 @@
+.seatMap {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.driverSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #F7F7F7;
+  border-radius: 12px;
+}
+
+.driverIcon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.driverSection span {
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.seatsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.seatRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rowNumber {
+  width: 30px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.aisle {
+  width: 40px;
+  height: 40px;
+}
+
+/* Dark mode */
+:global(.dark-mode) .seatMap {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .driverSection {
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .driverSection span,
+:global(.dark-mode) .rowNumber {
+  color: #999;
+}

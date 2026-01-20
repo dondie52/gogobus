@@ -1,0 +1,58 @@
+.priceBreakdown {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.priceBreakdown h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.priceRow.total {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1B4D4A;
+  padding-top: 1rem;
+}
+
+.divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 0.5rem 0;
+}
+
+/* Dark mode */
+:global(.dark-mode) .priceBreakdown {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .priceBreakdown h2 {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .priceRow {
+  color: #999;
+}
+
+:global(.dark-mode) .priceRow.total {
+  color: #4a9e96;
+}
+
+:global(.dark-mode) .divider {
+  background: #444;
+}

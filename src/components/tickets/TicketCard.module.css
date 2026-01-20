@@ -1,0 +1,186 @@
+.ticketCard {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ticketCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.companyInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.companyLogo {
+  font-size: 1.5rem;
+}
+
+.companyName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.statusBadge.confirmed {
+  background: #E8F5E9;
+  color: #4CAF50;
+}
+
+.statusBadge.cancelled {
+  background: #FFEBEE;
+  color: #F44336;
+}
+
+.statusBadge.pending {
+  background: #FFF3E0;
+  color: #FF9800;
+}
+
+.ticketRoute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #F7F7F7;
+  border-radius: 12px;
+}
+
+.routePoint {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.city {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.time {
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.routeLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 1rem;
+}
+
+.arrow {
+  font-size: 1.5rem;
+  color: #F5A623;
+  font-weight: 700;
+}
+
+.duration {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ticketFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.ticketDate,
+.ticketPrice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dateLabel,
+.priceLabel {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.dateValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.priceValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1B4D4A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Dark mode */
+:global(.dark-mode) .ticketCard {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .ticketHeader {
+  border-bottom-color: #444;
+}
+
+:global(.dark-mode) .companyName {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .ticketRoute {
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .city {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .time,
+:global(.dark-mode) .duration,
+:global(.dark-mode) .dateLabel,
+:global(.dark-mode) .priceLabel {
+  color: #999;
+}
+
+:global(.dark-mode) .dateValue {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .ticketFooter {
+  border-top-color: #444;
+}

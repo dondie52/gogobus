@@ -1,0 +1,487 @@
+/* ============================================================
+   GOGOBUS SEAT SELECTION STYLES
+   Path: src/pages/booking/SeatSelection.module.css
+   ============================================================ */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+  padding-bottom: 100px;
+}
+
+/* ==================== HEADER ==================== */
+
+.header {
+  background: var(--color-white);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  background: var(--color-gray-100);
+}
+
+.headerContent h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 2px;
+}
+
+.headerContent p {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+/* ==================== LOADING / ERROR ==================== */
+
+.loading,
+.error {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error h2 {
+  font-size: 20px;
+  color: var(--color-gray-800);
+  margin-bottom: 8px;
+}
+
+.error p {
+  color: var(--color-gray-500);
+  margin-bottom: 24px;
+}
+
+.error button {
+  padding: 12px 24px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ==================== CONTENT ==================== */
+
+.content {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ==================== TRIP INFO ==================== */
+
+.tripInfo {
+  background: var(--color-white);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.tripRoute {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.routeOrigin,
+.routeDest {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+.routeArrow {
+  color: var(--color-accent);
+  font-size: 18px;
+}
+
+.tripMeta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 13px;
+  color: var(--color-gray-600);
+}
+
+.tripMeta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tripMeta svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-gray-400);
+}
+
+/* ==================== LEGEND ==================== */
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--color-gray-600);
+}
+
+.legendSeat {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.legendSeat.available {
+  background: var(--color-white);
+  border: 2px solid var(--color-gray-300);
+}
+
+.legendSeat.selected {
+  background: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.legendSeat.unavailable {
+  background: var(--color-gray-200);
+  border: 2px solid var(--color-gray-200);
+}
+
+/* ==================== BUS CONTAINER ==================== */
+
+.busContainer {
+  background: var(--color-white);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+}
+
+.busFront {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--color-gray-100);
+}
+
+.driver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--color-gray-100);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gray-600);
+}
+
+.door {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ==================== SEAT MAP ==================== */
+
+.seatMap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seatRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rowNumber {
+  width: 24px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-gray-400);
+  text-align: center;
+}
+
+.rowSeats {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.seatGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.aisle {
+  width: 30px;
+}
+
+/* ==================== SEAT ==================== */
+
+.seat {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid var(--color-gray-300);
+  background: var(--color-white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-gray-600);
+  transition: all 0.2s ease;
+}
+
+.seat:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.seat.available {
+  background: var(--color-white);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-600);
+}
+
+.seat.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(27, 77, 74, 0.3);
+}
+
+.seat.unavailable {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-100);
+  color: var(--color-gray-400);
+  cursor: not-allowed;
+}
+
+.seat:disabled {
+  cursor: not-allowed;
+}
+
+.busBack {
+  text-align: center;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 2px solid var(--color-gray-100);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ==================== SUMMARY ==================== */
+
+.summary {
+  background: var(--color-white);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.selectedSeats {
+  margin-bottom: 16px;
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gray-500);
+  margin-bottom: 8px;
+}
+
+.seatTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.seatTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.seatTag button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.seatTag button:hover {
+  color: var(--color-white);
+}
+
+.noSeats {
+  font-size: 13px;
+  color: var(--color-gray-400);
+  font-style: italic;
+}
+
+/* ==================== PRICE BREAKDOWN ==================== */
+
+.priceBreakdown {
+  padding-top: 16px;
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.priceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+.priceRow.total {
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 1px dashed var(--color-gray-200);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+/* ==================== BOTTOM ACTION ==================== */
+
+.bottomAction {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-white);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.actionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.actionSeats {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.actionPrice {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.continueBtn {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.continueBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(27, 77, 74, 0.3);
+}
+
+.continueBtn:disabled {
+  background: var(--color-gray-300);
+  cursor: not-allowed;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 400px) {
+  .seat {
+    width: 38px;
+    height: 38px;
+    font-size: 10px;
+  }
+
+  .aisle {
+    width: 20px;
+  }
+
+  .seatGroup {
+    gap: 4px;
+  }
+}

@@ -1,0 +1,77 @@
+.qrCodeContainer {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qrTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 1.5rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.qrCode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qrPlaceholder {
+  width: 200px;
+  height: 200px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  background: white;
+}
+
+.qrGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+}
+
+.qrCell {
+  aspect-ratio: 1;
+}
+
+.qrData {
+  font-size: 0.75rem;
+  color: #666;
+  word-break: break-all;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.qrInstructions {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Dark mode */
+:global(.dark-mode) .qrCodeContainer {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .qrTitle {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .qrPlaceholder {
+  border-color: #444;
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .qrData,
+:global(.dark-mode) .qrInstructions {
+  color: #999;
+}

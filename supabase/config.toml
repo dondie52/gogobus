@@ -1,0 +1,14 @@
+# Supabase Edge Functions Configuration
+# This file configures Supabase Edge Functions for the GOGOBUS project
+
+[project]
+# Project ID - will be set when linking to Supabase project
+# Run: supabase link --project-ref <your-project-ref>
+
+[functions.payment-webhook-dpo]
+# DPO Pay webhook handler configuration
+verify_jwt = false  # Webhooks don't use JWT authentication
+
+[functions.payment-webhook-orange]
+# Orange Money webhook handler configuration
+verify_jwt = false  # Webhooks don't use JWT authentication

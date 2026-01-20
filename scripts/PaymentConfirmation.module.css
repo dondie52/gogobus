@@ -1,0 +1,682 @@
+/* ============================================================
+   GOGOBUS PAYMENT CONFIRMATION STYLES
+   Path: src/pages/booking/PaymentConfirmation.module.css
+   ============================================================ */
+
+.confirmationPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-gray-100) 0%, var(--color-gray-50) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ==================== BACKGROUND PATTERN ==================== */
+
+.bgPattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(27, 77, 74, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(245, 166, 35, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--color-accent);
+  animation: confettiFall 3s ease-in-out infinite;
+}
+
+.confetti:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+  background: var(--color-primary);
+}
+
+.confetti:nth-child(2) {
+  left: 50%;
+  animation-delay: 0.5s;
+  background: var(--color-accent);
+}
+
+.confetti:nth-child(3) {
+  left: 80%;
+  animation-delay: 1s;
+  background: var(--color-success);
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ==================== CONTENT ==================== */
+
+.content {
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  z-index: 1;
+}
+
+/* ==================== STATUS CARD ==================== */
+
+.statusCard {
+  text-align: center;
+  padding: 40px 24px;
+  margin-bottom: 24px;
+  border-radius: 24px;
+  animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statusCard.success {
+  background: linear-gradient(135deg, var(--color-success) 0%, #16A34A 100%);
+  color: var(--color-white);
+}
+
+.statusCard.warning {
+  background: linear-gradient(135deg, var(--color-warning) 0%, #D97706 100%);
+  color: var(--color-white);
+}
+
+.statusCard.info {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
+}
+
+.statusCard.error {
+  background: linear-gradient(135deg, var(--color-error) 0%, #B91C1C 100%);
+  color: var(--color-white);
+}
+
+.statusIcon {
+  margin-bottom: 16px;
+}
+
+.statusIcon svg {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.statusTitle {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.statusSubtitle {
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+/* ==================== TICKET CARD ==================== */
+
+.ticketCard {
+  background: var(--color-white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.05),
+    0 20px 40px rgba(0, 0, 0, 0.03);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ticketHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
+}
+
+.ticketLogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.ticketType {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+
+/* ==================== ROUTE SECTION ==================== */
+
+.routeSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, rgba(27, 77, 74, 0.03) 0%, rgba(245, 166, 35, 0.03) 100%);
+}
+
+.routeCity {
+  text-align: center;
+}
+
+.cityCode {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-gray-900);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cityName {
+  font-size: 12px;
+  color: var(--color-gray-500);
+  font-weight: 500;
+}
+
+.routePath {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.routeLine {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+}
+
+.routeDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.routeDash {
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-gray-300) 0,
+    var(--color-gray-300) 6px,
+    transparent 6px,
+    transparent 10px
+  );
+}
+
+.routeLine svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.routeDuration {
+  font-size: 11px;
+  color: var(--color-gray-500);
+  margin-top: 6px;
+}
+
+/* ==================== DETAILS GRID ==================== */
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--color-gray-100);
+  border-top: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.detailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--color-white);
+}
+
+.detailItem svg {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.detailContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detailLabel {
+  font-size: 11px;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detailValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.detailValue.seatNumber {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ==================== TICKET DIVIDER ==================== */
+
+.ticketDivider {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0 -1px;
+}
+
+.dividerCircle {
+  width: 24px;
+  height: 24px;
+  background: var(--color-gray-100);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-gray-200) 0,
+    var(--color-gray-200) 8px,
+    transparent 8px,
+    transparent 14px
+  );
+}
+
+/* ==================== REFERENCE SECTION ==================== */
+
+.refSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 16px;
+}
+
+.refInfo {
+  flex: 1;
+}
+
+.refLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.refValue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refValue span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  letter-spacing: 1px;
+}
+
+.copyBtn {
+  background: var(--color-gray-100);
+  border: none;
+  color: var(--color-gray-600);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copyBtn:hover {
+  background: var(--color-gray-200);
+  color: var(--color-gray-800);
+}
+
+.qrCode {
+  width: 80px;
+  height: 80px;
+  background: var(--color-gray-100);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-400);
+  flex-shrink: 0;
+}
+
+.qrCode svg {
+  width: 60px;
+  height: 60px;
+}
+
+/* ==================== PAYMENT INFO ==================== */
+
+.paymentInfo {
+  padding: 16px 20px;
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.paymentRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+.paymentRow:first-child {
+  padding-top: 0;
+}
+
+.amountPaid {
+  font-weight: 700;
+  color: var(--color-gray-900);
+  font-size: 16px;
+}
+
+.paymentNote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(245, 166, 35, 0.1);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--color-accent-dark);
+}
+
+.bankDetails {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--color-white);
+  border-radius: 12px;
+  border: 1px solid var(--color-gray-200);
+}
+
+.bankTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  margin-bottom: 12px;
+}
+
+.bankRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.bankRow:last-child {
+  border-bottom: none;
+}
+
+.bankRow span:first-child {
+  color: var(--color-gray-500);
+}
+
+.bankRow span:last-child {
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+/* ==================== ACTIONS ==================== */
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  animation: fadeIn 0.6s ease 0.4s both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.actionBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionBtn.primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
+  border: none;
+  box-shadow: 0 4px 15px rgba(27, 77, 74, 0.3);
+}
+
+.actionBtn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(27, 77, 74, 0.4);
+}
+
+.actionBtn.secondary {
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 2px solid var(--color-gray-200);
+}
+
+.actionBtn.secondary:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+/* ==================== FOOTER LINKS ==================== */
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 32px;
+  animation: fadeIn 0.6s ease 0.5s both;
+}
+
+.footerLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-gray-600);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footerLink:hover {
+  color: var(--color-primary);
+}
+
+/* ==================== HELP TEXT ==================== */
+
+.helpText {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-gray-200);
+  animation: fadeIn 0.6s ease 0.6s both;
+}
+
+.helpText p {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.helpText a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.helpText a:hover {
+  text-decoration: underline;
+}
+
+/* ==================== SPINNER ==================== */
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 480px) {
+  .content {
+    padding: 16px 16px 32px;
+  }
+
+  .statusCard {
+    padding: 32px 20px;
+    border-radius: 20px;
+  }
+
+  .statusTitle {
+    font-size: 22px;
+  }
+
+  .routeSection {
+    padding: 20px 16px;
+  }
+
+  .cityCode {
+    font-size: 24px;
+  }
+
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .refValue span {
+    font-size: 18px;
+  }
+
+  .qrCode {
+    width: 70px;
+    height: 70px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .footerLinks {
+    gap: 24px;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+  .confirmationPage {
+    background: white;
+  }
+
+  .bgPattern,
+  .actions,
+  .footerLinks,
+  .helpText {
+    display: none;
+  }
+
+  .ticketCard {
+    box-shadow: none;
+    border: 2px solid var(--color-gray-300);
+  }
+
+  .statusCard {
+    background: var(--color-gray-100) !important;
+    color: var(--color-gray-900) !important;
+  }
+}

@@ -41,23 +41,63 @@ const { data } = await signUp(email, password);
 - `apiClient.js` + `apiClient.ts`
 - `useApi.js` + `useApi.ts`
 - `useMetrics.js` + `useMetrics.ts`
+- `useTaskQueue.js` + `useTaskQueue.ts`
+- `CommandCenter.jsx` + `CommandCenter.tsx`
+
+**Why this is dangerous:**
+- Module resolution is ambiguous - Vite/TypeScript may import different versions in different contexts
+- Causes inconsistent behavior and hard-to-debug issues
+- Build tools may cache the wrong version
+- Type checking may pass but runtime uses wrong file
 
 **Resolution:**
 1. **If using TypeScript:** Keep only `.ts` files, delete `.js` versions
 2. **If using JavaScript:** Keep only `.js` files, delete `.ts` versions
 3. **During migration:** Use a single extension and configure module resolution to prefer TypeScript
 
+**Migration Completion Checklist:**
+When completing a TypeScript migration, ensure:
+
+1. ✅ **Check for duplicates:**
+   ```bash
+   node scripts/complete-ts-migration.js --dry-run
+   ```
+
+2. ✅ **Check for outdated imports:**
+   ```bash
+   node scripts/check-imports.js
+   ```
+
+3. ✅ **Update all imports:**
+   - Change `import ... from './file.js'` → `import ... from './file'` (or `'./file.ts'`)
+   - Change `require('./file.js')` → `require('./file')` (or `'./file.ts'`)
+
+4. ✅ **Remove JavaScript files:**
+   ```bash
+   node scripts/complete-ts-migration.js
+   ```
+
+5. ✅ **Verify build works:**
+   - Run build/test commands
+   - Check that no errors reference `.js` files
+
+6. ✅ **Update module resolution config:**
+   - Ensure `tsconfig.json` has proper `moduleResolution`
+   - Ensure `vite.config.js/ts` or build config prefers TypeScript
+
 **Prevention:**
 - Configure module resolution in `tsconfig.json` or `package.json` to prefer TypeScript
 - Use ESLint rules to catch duplicate files
+- Run migration scripts before committing TypeScript changes
 - Document migration strategy clearly
 
 **For this project (currently JavaScript):**
 - ✅ No TypeScript files exist
 - If migrating to TypeScript in the future:
   1. Convert one file at a time
-  2. Delete `.js` version after successful conversion
-  3. Update imports immediately
+  2. Update imports immediately
+  3. Delete `.js` version after successful conversion
+  4. Run `scripts/complete-ts-migration.js` to verify no duplicates remain
 
 ---
 

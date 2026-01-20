@@ -1,0 +1,43 @@
+.errorBoundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 40px;
+  text-align: center;
+}
+
+.errorBoundary h2 {
+  color: #e74c3c;
+  margin-bottom: 16px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.errorBoundary p {
+  color: #666;
+  margin-bottom: 24px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.retryButton {
+  padding: 12px 24px;
+  background-color: #1B4D4A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background-color 0.2s ease;
+}
+
+.retryButton:hover {
+  background-color: #153a37;
+}
+
+/* Dark mode */
+:global(.dark-mode) .errorBoundary p {
+  color: #999;
+}

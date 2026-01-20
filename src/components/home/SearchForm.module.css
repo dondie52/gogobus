@@ -1,0 +1,112 @@
+.searchForm {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.searchRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-end;
+}
+
+@media (max-width: 480px) {
+  .searchRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .swapButton {
+    align-self: center;
+    margin: 0.5rem 0;
+  }
+}
+
+.cityInput,
+.dateInput,
+.passengersInput {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #1B4D4A;
+  box-shadow: 0 0 0 3px rgba(27, 77, 74, 0.1);
+}
+
+.swapButton {
+  background: #F5A623;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.swapButton:hover {
+  background: #e0951a;
+  transform: rotate(180deg);
+}
+
+.searchButton {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.errorMessage {
+  background: #FFEBEE;
+  color: #C62828;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Dark mode */
+:global(.dark-mode) .searchForm {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .label {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .select {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}

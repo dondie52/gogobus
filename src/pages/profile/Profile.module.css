@@ -1,0 +1,863 @@
+/* Profile.module.css - Production Ready Version */
+
+.profileScreen {
+  width: 100%;
+  min-height: 100vh;
+  background: #F8FAFC;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.profileScreen.loaded {
+  opacity: 1;
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1B4D4A 0%, #153D3A 100%);
+}
+
+.loadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.loadingAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+}
+
+.loadingText {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Profile Hero Section */
+.profileHero {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+}
+
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1B4D4A 0%, #153D3A 100%);
+}
+
+.heroPattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(245, 166, 35, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 40%);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  padding-top: 40px;
+}
+
+.backButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(-2px);
+}
+
+.heroTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.settingsButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.settingsButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(45deg);
+}
+
+/* Profile Card */
+.profileCard {
+  background: white;
+  border-radius: 24px 24px 0 0;
+  margin-top: -24px;
+  padding: 24px 20px;
+  position: relative;
+  z-index: 20;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 3px solid #F5A623;
+}
+
+.avatarPlaceholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #F5A623 0%, #E8941F 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 3px solid rgba(245, 166, 35, 0.3);
+}
+
+.editAvatarBtn {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #1B4D4A;
+  border: 2px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editAvatarBtn:hover {
+  background: #153D3A;
+  transform: scale(1.1);
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.userEmail {
+  font-size: 0.85rem;
+  color: #64748B;
+  margin-bottom: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.userPhone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #94A3B8;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.userPhone svg {
+  color: #94A3B8;
+}
+
+/* Stats Row */
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #F8FAFC;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1B4D4A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #64748B;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.statDivider {
+  width: 1px;
+  height: 32px;
+  background: #E2E8F0;
+}
+
+/* Edit Profile Button */
+.editProfileBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  background: transparent;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1B4D4A;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.editProfileBtn:hover {
+  border-color: #1B4D4A;
+  background: rgba(27, 77, 74, 0.05);
+}
+
+/* Menu Container */
+.menuContainer {
+  padding: 0 16px;
+}
+
+/* Menu Section */
+.menuSection {
+  margin-bottom: 24px;
+}
+
+.menuSectionTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.menuList {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.menuItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuItem:hover {
+  background: #F8FAFC;
+}
+
+.menuItem:active {
+  background: #F1F5F9;
+}
+
+.menuItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.menuIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuItem span {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.menuItem > svg {
+  color: #CBD5E1;
+  transition: transform 0.3s ease;
+}
+
+.menuItem:hover > svg {
+  color: #1B4D4A;
+  transform: translateX(3px);
+}
+
+.menuBadge {
+  background: #FEF3C7;
+  color: #92400E;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Logout Button */
+.logoutButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: #FEF2F2;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #DC2626;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.logoutButton:hover {
+  background: #FEE2E2;
+}
+
+.logoutButton:active {
+  background: #FECACA;
+}
+
+/* App Version */
+.appVersion {
+  text-align: center;
+  padding: 8px;
+}
+
+.appVersion span {
+  font-size: 0.75rem;
+  color: #94A3B8;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Bottom Spacer */
+.bottomSpacer {
+  height: 80px;
+}
+
+/* Profile Page (Sub Pages) */
+.profilePage {
+  width: 100%;
+  min-height: 100vh;
+  background: #F8FAFC;
+}
+
+.profilePageHeader {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  padding-top: 50px;
+  background: #1B4D4A;
+}
+
+.profilePageBackBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profilePageBackBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.profilePageHeader h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.profilePageContent {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FEF2F2;
+  color: #DC2626;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border: 1px solid #FECACA;
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: white;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.select:focus {
+  border-color: #1B4D4A;
+  box-shadow: 0 0 0 4px rgba(27, 77, 74, 0.1);
+}
+
+.select:disabled {
+  background-color: #F8FAFC;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #F5A623 0%, #E8941F 100%);
+  color: #1B4D4A;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.35);
+  margin-top: 8px;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(245, 166, 35, 0.45);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Settings Section */
+.settingsSection {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.settingsSection h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F1F5F9;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #F8FAFC;
+}
+
+.settingItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settingItem span {
+  font-size: 0.95rem;
+  color: #475569;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Toggle Switch */
+.toggleSwitch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: #E2E8F0;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggleSwitch.active {
+  background: #1B4D4A;
+}
+
+.toggleSwitch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleSwitch.active::after {
+  transform: translateX(24px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .profileHero {
+    height: 120px;
+  }
+
+  .heroContent {
+    padding-top: 35px;
+  }
+
+  .profileCard {
+    padding: 20px 16px;
+  }
+
+  .avatar,
+  .avatarPlaceholder {
+    width: 70px;
+    height: 70px;
+  }
+
+  .avatarPlaceholder {
+    font-size: 1.75rem;
+  }
+
+  .userName {
+    font-size: 1.1rem;
+  }
+
+  .statsRow {
+    padding: 14px 12px;
+  }
+
+  .statValue {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .heroTitle {
+    font-size: 1.1rem;
+  }
+
+  .avatar,
+  .avatarPlaceholder {
+    width: 64px;
+    height: 64px;
+  }
+
+  .menuItem {
+    padding: 14px 12px;
+  }
+
+  .menuIcon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (min-width: 768px) {
+  .profileCard {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 24px;
+    margin-top: -32px;
+  }
+
+  .menuContainer {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Dark Mode */
+:global(.dark-mode) .profileScreen {
+  background: #111827;
+}
+
+:global(.dark-mode) .profileCard {
+  background: #1E293B;
+}
+
+:global(.dark-mode) .userName {
+  color: #F1F5F9;
+}
+
+:global(.dark-mode) .userEmail {
+  color: #94A3B8;
+}
+
+:global(.dark-mode) .userPhone {
+  color: #64748B;
+}
+
+:global(.dark-mode) .statsRow {
+  background: #0F172A;
+}
+
+:global(.dark-mode) .statValue {
+  color: #F5A623;
+}
+
+:global(.dark-mode) .statLabel {
+  color: #94A3B8;
+}
+
+:global(.dark-mode) .statDivider {
+  background: #334155;
+}
+
+:global(.dark-mode) .editProfileBtn {
+  border-color: #475569;
+  color: #F5A623;
+}
+
+:global(.dark-mode) .editProfileBtn:hover {
+  border-color: #F5A623;
+  background: rgba(245, 166, 35, 0.1);
+}
+
+:global(.dark-mode) .menuSectionTitle {
+  color: #64748B;
+}
+
+:global(.dark-mode) .menuList {
+  background: #1E293B;
+}
+
+:global(.dark-mode) .menuItem {
+  border-bottom-color: #0F172A;
+}
+
+:global(.dark-mode) .menuItem:hover {
+  background: #334155;
+}
+
+:global(.dark-mode) .menuItem span {
+  color: #F1F5F9;
+}
+
+:global(.dark-mode) .menuItem > svg {
+  color: #475569;
+}
+
+:global(.dark-mode) .menuItem:hover > svg {
+  color: #F5A623;
+}
+
+:global(.dark-mode) .menuBadge {
+  background: rgba(245, 166, 35, 0.15);
+  color: #F5A623;
+}
+
+:global(.dark-mode) .logoutButton {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+:global(.dark-mode) .logoutButton:hover {
+  background: rgba(220, 38, 38, 0.15);
+}
+
+:global(.dark-mode) .appVersion span {
+  color: #64748B;
+}
+
+:global(.dark-mode) .profilePage {
+  background: #111827;
+}
+
+:global(.dark-mode) .settingsSection {
+  background: #1E293B;
+}
+
+:global(.dark-mode) .settingsSection h2 {
+  color: #F1F5F9;
+  border-bottom-color: #334155;
+}
+
+:global(.dark-mode) .settingItem {
+  border-bottom-color: #0F172A;
+}
+
+:global(.dark-mode) .settingItem span {
+  color: #E2E8F0;
+}
+
+:global(.dark-mode) .label {
+  color: #94A3B8;
+}
+
+:global(.dark-mode) .select {
+  background-color: #1E293B;
+  border-color: #475569;
+  color: #F1F5F9;
+}
+
+:global(.dark-mode) .select:focus {
+  border-color: #F5A623;
+  box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.15);
+}
+
+:global(.dark-mode) .toggleSwitch {
+  background: #475569;
+}
+
+:global(.dark-mode) .toggleSwitch.active {
+  background: #F5A623;
+}
+
+:global(.dark-mode) .errorMessage {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+}

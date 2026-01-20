@@ -1,0 +1,7 @@
+.onboardingContainer {
+  width: 100%;
+  min-height: 100vh;
+  background: #1B4D4A;
+  position: relative;
+  overflow: hidden;
+}

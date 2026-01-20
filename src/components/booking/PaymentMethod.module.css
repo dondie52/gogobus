@@ -1,0 +1,90 @@
+.paymentMethods {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.methodsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.methodButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.methodButton:hover {
+  border-color: #1B4D4A;
+  background: #F7F7F7;
+}
+
+.methodButton.selected {
+  border-color: #1B4D4A;
+  background: #E8F4F3;
+}
+
+.methodIcon {
+  font-size: 1.5rem;
+}
+
+.methodLabel {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.checkmark {
+  color: #1B4D4A;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* Dark mode */
+:global(.dark-mode) .paymentMethods {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .title {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .methodButton {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+:global(.dark-mode) .methodButton:hover {
+  background: #1a1a1a;
+  border-color: #4a9e96;
+}
+
+:global(.dark-mode) .methodButton.selected {
+  background: #1a3a3a;
+  border-color: #1B4D4A;
+}
+
+:global(.dark-mode) .methodLabel {
+  color: #e0e0e0;
+}

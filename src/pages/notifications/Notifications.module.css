@@ -1,0 +1,145 @@
+.notificationsScreen {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+}
+
+.notificationsHeader {
+  background: var(--color-white);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.backButton:hover {
+  background: var(--color-gray-100);
+}
+
+.notificationsHeader h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin: 0;
+  flex: 1;
+}
+
+.unreadBadge {
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.notificationsContent {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 64px 20px;
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.emptyState h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 8px;
+}
+
+.emptyState p {
+  font-size: 14px;
+  color: var(--color-gray-500);
+  line-height: 1.6;
+}
+
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notificationItem {
+  background: var(--color-white);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.notificationItem:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.notificationItem.unread {
+  border-left: 3px solid var(--color-primary);
+  background: rgba(27, 77, 74, 0.02);
+}
+
+.notificationIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.notificationContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin: 0 0 4px 0;
+}
+
+.notificationMessage {
+  font-size: 14px;
+  color: var(--color-gray-600);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.notificationTime {
+  font-size: 12px;
+  color: var(--color-gray-400);
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}

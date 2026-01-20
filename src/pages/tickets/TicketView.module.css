@@ -1,0 +1,260 @@
+.ticketViewScreen {
+  width: 100%;
+  min-height: 100vh;
+  background: #F7F7F7;
+  padding: 20px;
+}
+
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
+.errorContainer p {
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ticketViewHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: color 0.2s ease;
+}
+
+.backButton:hover {
+  color: #1B4D4A;
+}
+
+.ticketViewHeader h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ticketViewContent {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ticketCard {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.companyInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.companyLogo {
+  font-size: 3rem;
+}
+
+.companyName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 0.25rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.bookingRef {
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.statusBadge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.statusBadge.confirmed {
+  background: #E8F5E9;
+  color: #4CAF50;
+}
+
+.statusBadge.cancelled {
+  background: #FFEBEE;
+  color: #F44336;
+}
+
+.ticketRoute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #F7F7F7;
+  border-radius: 12px;
+}
+
+.routePoint {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.city {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.time {
+  font-size: 1rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.routeLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+}
+
+.arrow {
+  font-size: 2rem;
+  color: #F5A623;
+  font-weight: 700;
+}
+
+.duration {
+  font-size: 0.875rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ticketDetails {
+  margin-bottom: 2rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailRow span:first-child {
+  color: #666;
+  font-weight: 500;
+}
+
+.detailRow span:last-child {
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.price {
+  font-size: 1.25rem;
+  color: #1B4D4A;
+  font-weight: 700;
+}
+
+.ticketDownloadSection {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ticketActions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Dark mode */
+:global(.dark-mode) .ticketViewScreen {
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .backButton {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .ticketViewHeader h1 {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .ticketCard {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .ticketHeader {
+  border-bottom-color: #444;
+}
+
+:global(.dark-mode) .companyName {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .bookingRef {
+  color: #999;
+}
+
+:global(.dark-mode) .ticketRoute {
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .city {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .time,
+:global(.dark-mode) .duration,
+:global(.dark-mode) .detailRow span:first-child {
+  color: #999;
+}
+
+:global(.dark-mode) .detailRow span:last-child {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .detailRow {
+  border-bottom-color: #444;
+}

@@ -1,0 +1,517 @@
+/* Onboarding Screen Base */
+.onboardingScreen {
+  width: 100%;
+  min-height: 100vh;
+  background: #1B4D4A;
+  display: flex;
+  flex-direction: column;
+}
+
+.onboardingContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  padding-top: 60px;
+}
+
+/* Onboarding Illustrations */
+.onboardingIllustration {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+  min-height: 320px;
+}
+
+/* Ticket Card (Onboarding 1) */
+.ticketCard {
+  width: 100%;
+  max-width: 280px;
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: cardFloat 3s ease-in-out infinite;
+  position: relative;
+}
+
+.ticketCard::before,
+.ticketCard::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  background: #1B4D4A;
+  border-radius: 50%;
+}
+
+.ticketCard::before {
+  left: -8px;
+}
+
+.ticketCard::after {
+  right: -8px;
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #DDDDDD;
+}
+
+.ticketLabel {
+  font-size: 0.75rem;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ticketStatus {
+  font-size: 0.75rem;
+  color: white;
+  background: #1B4D4A;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.ticketRoute {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+}
+
+.routePoint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.city {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: #666666;
+}
+
+.routeLine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  padding: 0 0.5rem;
+}
+
+.routeIcon {
+  color: #F5A623;
+  font-size: 1.125rem;
+}
+
+.via {
+  font-size: 10px;
+  color: #999999;
+}
+
+.ticketDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #F7F7F7;
+  border-radius: 0.5rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.detailLabel {
+  color: #666666;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.ticketBarcode {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.barcodeLines {
+  width: 100%;
+  height: 30px;
+  background: repeating-linear-gradient(
+    90deg,
+    #1A1A1A 0px,
+    #1A1A1A 2px,
+    transparent 2px,
+    transparent 4px,
+    #1A1A1A 4px,
+    #1A1A1A 5px,
+    transparent 5px,
+    transparent 8px,
+    #1A1A1A 8px,
+    #1A1A1A 10px,
+    transparent 10px,
+    transparent 12px
+  );
+  border-radius: 2px;
+}
+
+/* Bonus Card (Onboarding 2) */
+.bonusCard {
+  width: 100%;
+  max-width: 280px;
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+.bonusHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bonusIcon {
+  font-size: 1.25rem;
+}
+
+.bonusLabel {
+  font-size: 0.875rem;
+  color: #666666;
+}
+
+.bonusTag {
+  font-size: 0.75rem;
+  background: #1B4D4A;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  margin-left: auto;
+}
+
+.bonusPoints {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #F5A623 0%, #FFD700 100%);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.pointsIcon {
+  font-size: 1.5rem;
+}
+
+.pointsValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1A1A1A;
+}
+
+.bonusPromo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: #F7F7F7;
+  border-radius: 0.75rem;
+}
+
+.promoImage {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coffeeCup {
+  font-size: 28px;
+}
+
+.promoDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.promoBrand {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.promoTerms {
+  font-size: 0.75rem;
+  color: #666666;
+}
+
+/* Tracking Card (Onboarding 3) */
+.trackingCard {
+  width: 100%;
+  max-width: 280px;
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+.trackingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.trackingLabel {
+  font-size: 0.75rem;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.trackingLive {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #F44336;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+.trackingLocation {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #F7F7F7;
+  border-radius: 0.5rem;
+}
+
+.locationIcon {
+  font-size: 1.25rem;
+}
+
+.locationName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.trackingNext {
+  margin-bottom: 1rem;
+}
+
+.nextLabel {
+  font-size: 0.75rem;
+  color: #666666;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.nextInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #F7F7F7;
+  border-radius: 0.5rem;
+}
+
+.nextIcon {
+  font-size: 1.5rem;
+}
+
+.nextDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nextName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.nextDesc {
+  font-size: 0.75rem;
+  color: #666666;
+}
+
+.trackingMap {
+  height: 120px;
+  background: #F7F7F7;
+  border-radius: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.mapPlaceholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.mapRoute {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background: #1B4D4A;
+  transform: translateY(-50%);
+}
+
+.mapMarker {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mapMarker.current {
+  left: 15%;
+  background: #4CAF50;
+  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3);
+}
+
+.mapMarker.destination {
+  right: 15%;
+  background: #F44336;
+  box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.3);
+}
+
+/* Onboarding Text */
+.onboardingText {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.onboardingText h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.75rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.onboardingText p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Indicators */
+.onboardingIndicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: white;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Buttons */
+.primaryButton {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.registerLink {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.registerLink a {
+  color: white;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.registerLink a:hover {
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes cardFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Dark mode */
+:global(.dark-mode) .ticketCard,
+:global(.dark-mode) .bonusCard,
+:global(.dark-mode) .trackingCard {
+  background: #2a2a2a;
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .city,
+:global(.dark-mode) .detailValue,
+:global(.dark-mode) .promoBrand,
+:global(.dark-mode) .locationName,
+:global(.dark-mode) .nextName {
+  color: #e0e0e0;
+}

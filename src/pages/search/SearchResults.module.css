@@ -1,0 +1,516 @@
+/* ============================================================
+   GOGOBUS SEARCH RESULTS STYLES
+   Path: src/pages/SearchResults.module.css
+   ============================================================ */
+
+.searchPage {
+  min-height: 100vh;
+  background: var(--color-gray-50);
+}
+
+/* ==================== HEADER ==================== */
+
+.header {
+  background: var(--color-white);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.backBtn:hover {
+  background: var(--color-gray-100);
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 2px;
+}
+
+.headerMeta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.headerMeta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.headerMeta svg {
+  width: 14px;
+  height: 14px;
+}
+
+.modifyBtn {
+  padding: 8px 16px;
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.modifyBtn:hover {
+  background: var(--color-gray-200);
+}
+
+/* ==================== FILTERS ==================== */
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-100);
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterGroup label {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.filterGroup select {
+  padding: 8px 12px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--color-gray-700);
+  background: var(--color-white);
+  cursor: pointer;
+}
+
+.resultsCount {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+/* ==================== CONTENT ==================== */
+
+.content {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ==================== LOADING ==================== */
+
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-gray-200);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: var(--color-gray-500);
+}
+
+/* ==================== ERROR / EMPTY ==================== */
+
+.error,
+.empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.error svg,
+.empty svg {
+  width: 64px;
+  height: 64px;
+  color: var(--color-gray-300);
+  margin-bottom: 16px;
+}
+
+.error h2,
+.empty h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-gray-800);
+  margin-bottom: 8px;
+}
+
+.error p,
+.empty p {
+  color: var(--color-gray-500);
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error button,
+.empty button {
+  padding: 12px 24px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.error button:hover,
+.empty button:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ==================== TRIPS LIST ==================== */
+
+.tripsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tripCard {
+  background: var(--color-white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.tripCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.tripMain {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 24px;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ==================== TIMES ==================== */
+
+.tripTimes {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.timeBlock {
+  text-align: center;
+  min-width: 70px;
+}
+
+.time {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+.city {
+  font-size: 12px;
+  color: var(--color-gray-500);
+}
+
+.duration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 100px;
+}
+
+.durationLine {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.durationDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.durationDash {
+  flex: 1;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-gray-300) 0,
+    var(--color-gray-300) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.durationLine svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+.duration > span {
+  font-size: 11px;
+  color: var(--color-gray-500);
+}
+
+/* ==================== BUS INFO ==================== */
+
+.busInfo {
+  min-width: 120px;
+}
+
+.busName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin-bottom: 2px;
+}
+
+.busType {
+  font-size: 12px;
+  color: var(--color-gray-500);
+  text-transform: capitalize;
+  margin-bottom: 6px;
+}
+
+.amenities {
+  display: flex;
+  gap: 8px;
+}
+
+.amenity {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-gray-100);
+  border-radius: 6px;
+  color: var(--color-gray-600);
+}
+
+/* ==================== SEATS INFO ==================== */
+
+.seatsInfo {
+  text-align: center;
+  min-width: 80px;
+}
+
+.seatsCount {
+  display: inline-block;
+  padding: 6px 12px;
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--color-success);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.seatsCount.low {
+  background: rgba(245, 166, 35, 0.1);
+  color: var(--color-accent);
+}
+
+/* ==================== PRICE & ACTION ==================== */
+
+.priceAction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.price {
+  text-align: right;
+}
+
+.priceAmount {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.priceLabel {
+  font-size: 11px;
+  color: var(--color-gray-500);
+}
+
+.selectBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-white);
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selectBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(27, 77, 74, 0.3);
+}
+
+.selectBtn:disabled {
+  background: var(--color-gray-300);
+  cursor: not-allowed;
+}
+
+/* ==================== LOW SEATS WARNING ==================== */
+
+.lowSeatsWarning {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.1) 0%, rgba(245, 166, 35, 0.05) 100%);
+  border-top: 1px solid rgba(245, 166, 35, 0.2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent-dark);
+  text-align: center;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 800px) {
+  .tripMain {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tripTimes {
+    justify-content: space-between;
+  }
+
+  .busInfo,
+  .seatsInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-gray-100);
+  }
+
+  .busInfo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .priceAction {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-gray-100);
+  }
+
+  .price {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .headerTitle {
+    font-size: 16px;
+  }
+
+  .headerMeta {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .modifyBtn {
+    display: none;
+  }
+
+  .filters {
+    padding: 12px 16px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .tripMain {
+    padding: 16px;
+  }
+
+  .timeBlock {
+    min-width: 60px;
+  }
+
+  .time {
+    font-size: 18px;
+  }
+
+  .duration {
+    min-width: 80px;
+  }
+
+  .priceAmount {
+    font-size: 20px;
+  }
+}

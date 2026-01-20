@@ -78,9 +78,34 @@ if (accessToken && type === 'email') {
 }
 ```
 
+#### 3. **Duplicate JavaScript/TypeScript Files (Technical Debt Landmine)**
+**Issue**: PR adds TypeScript versions alongside existing JS files without removing originals.
+
+**Problematic patterns:**
+- `apiClient.js` + `apiClient.ts`
+- `useApi.js` + `useApi.ts`
+- `useMetrics.js` + `useMetrics.ts`
+- `useTaskQueue.js` + `useTaskQueue.ts`
+- `CommandCenter.jsx` + `CommandCenter.tsx`
+
+**Why this is critical:**
+- Module resolution is ambiguous - Vite/TypeScript may import different versions in different contexts
+- Causes inconsistent behavior and hard-to-debug bugs
+- Build tools may cache the wrong version
+- Type checking may pass but runtime uses wrong file
+
+**Recommendation**: Complete the TypeScript migration in this PR:
+1. Run migration check: `node scripts/complete-ts-migration.js --dry-run`
+2. Check for outdated imports: `node scripts/check-imports.js`
+3. Update all imports to use `.ts`/`.tsx` files (remove `.js` extension or use `.ts`)
+4. Remove JavaScript files: `node scripts/complete-ts-migration.js`
+5. Verify build works correctly
+
+**See**: [CODING_STANDARDS.md](./CODING_STANDARDS.md#2-duplicate-javascripttypescript-files) and [scripts/README.md](./scripts/README.md)
+
 ### 🟡 Medium Priority Issues
 
-#### 3. **Incomplete Error Handling in Signup**
+#### 4. **Incomplete Error Handling in Signup**
 ```javascript
 // auth.js:146-151
 const { data, error } = await window.SupabaseAuth.signUp(email, password, {
@@ -114,7 +139,7 @@ if (data.session && data.user) {
 }
 ```
 
-#### 4. **Duplicate Session Check Logic**
+#### 5. **Duplicate Session Check Logic**
 The `checkAuth()` function has duplicate logic for handling sessions (lines 587-618 and 624-651). This could be refactored into a helper function.
 
 **Recommendation**: Extract session handling into a reusable function:
@@ -139,7 +164,7 @@ async function handleUserSession(session) {
 }
 ```
 
-#### 5. **Missing Error Handling for Profile Errors**
+#### 6. **Missing Error Handling for Profile Errors**
 When getting profile fails, it's silently caught but the error type isn't differentiated. `PGRST116` (not found) is expected, but other errors might indicate real issues.
 
 **Recommendation**: Distinguish between "profile doesn't exist" vs "actual error":
@@ -159,13 +184,13 @@ try {
 
 ### 🟢 Minor Issues / Suggestions
 
-#### 6. **Magic Number: 500ms Timeout**
+#### 7. **Magic Number: 500ms Timeout**
 The hardcoded 500ms timeout should be a named constant for clarity:
 ```javascript
 const MAGIC_LINK_PROCESSING_DELAY = 500; // ms
 ```
 
-#### 7. **Error Message String Matching is Fragile**
+#### 8. **Error Message String Matching is Fragile**
 ```javascript
 if (error.message.includes('Email not confirmed') || error.message.includes('not confirmed')) {
 ```
@@ -179,7 +204,7 @@ if (errorCode === 400 || error.message?.toLowerCase().includes('not confirmed'))
 }
 ```
 
-#### 8. **Console.log Instead of console.error for Profile Not Found**
+#### 9. **Console.log Instead of console.error for Profile Not Found**
 Line 594 uses `console.log` for a profile not found, which is expected behavior. Consider using `console.debug` or removing it entirely.
 
 ## 🔒 Security Considerations
@@ -224,6 +249,7 @@ Before merging, test:
 ### Must Fix:
 1. 🔴 Remove password from localStorage (Security)
 2. 🔴 Fix magic link race condition (Reliability)
+3. 🔴 Complete TypeScript migration - remove duplicate JS files (Technical Debt)
 
 ### Should Fix:
 3. 🟡 Handle email confirmation disabled scenario
