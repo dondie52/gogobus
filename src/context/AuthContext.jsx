@@ -69,7 +69,16 @@ export const AuthProvider = ({ children }) => {
         // #region agent log
         fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AuthContext.jsx:54',message:'Error fetching profile in AuthContext',data:{userId:userId,error:error.message,errorCode:error.code},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
         // #endregion
-        logError('Error fetching user profile', error);
+        
+        // Distinguish between "profile doesn't exist" (expected for new users) vs actual errors
+        if (error.code === 'PGRST116' || error.message?.includes('No rows')) {
+          // Profile doesn't exist - expected for new users, not an error
+          // Use console.debug instead of console.log for expected behaviors
+          console.debug('Profile not found - new user');
+        } else {
+          // Actual error - log it
+          logError('Error fetching user profile', error);
+        }
         setUserProfile(null);
       }
     };

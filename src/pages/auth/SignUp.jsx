@@ -58,14 +58,24 @@ const SignUp = () => {
 
     setLoading(true);
     try {
-      await signup(email, password, {
+      const { user: authUser, session: authSession } = await signup(email, password, {
         full_name: fullName,
         phone: phone,
       });
+      
       // Track signup conversion
       trackSignup('email');
-      localStorage.setItem('gogobus_signupData', JSON.stringify({ fullName, email, phone }));
-      navigate('/otp-verification', { state: { email } });
+      
+      // Check if user is immediately signed in (email confirmation disabled)
+      if (authSession && authUser) {
+        // User is already authenticated, proceed to profile completion
+        localStorage.setItem('gogobus_signupData', JSON.stringify({ fullName, email, phone }));
+        navigate('/complete-profile');
+      } else {
+        // Email confirmation required, show verification screen
+        localStorage.setItem('gogobus_signupData', JSON.stringify({ fullName, email, phone }));
+        navigate('/otp-verification', { state: { email } });
+      }
     } catch (err) {
       setError(err.message || 'Failed to create account. Please try again.');
     } finally {

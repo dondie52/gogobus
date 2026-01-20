@@ -131,9 +131,14 @@ const Login = () => {
       }, 1200);
     } catch (err) {
       let errorMessage = 'Login failed. Please check your credentials.';
-      if (err.message?.includes('email not confirmed') || err.message?.includes('not confirmed')) {
+      
+      // Check error status/code first (more reliable than string matching)
+      const errorStatus = err.status || err.code;
+      const errorMessageLower = err.message?.toLowerCase() || '';
+      
+      if (errorStatus === 400 || errorMessageLower.includes('email not confirmed') || errorMessageLower.includes('not confirmed')) {
         errorMessage = 'Please verify your email address before logging in.';
-      } else if (err.message?.includes('invalid')) {
+      } else if (errorStatus === 401 || errorMessageLower.includes('invalid') || errorMessageLower.includes('invalid_credentials')) {
         errorMessage = 'Invalid email or password.';
       } else if (err.message) {
         errorMessage = err.message;
