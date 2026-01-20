@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { SearchProvider } from './context/SearchContext';
@@ -107,7 +107,7 @@ function App() {
         <AuthProvider>
           <SearchProvider>
             <BookingProvider>
-              <BrowserRouter
+              <HashRouter
                 future={{
                   v7_startTransition: true,
                   v7_relativeSplatPath: true,
@@ -264,7 +264,7 @@ function App() {
                 </Routes>
               </Suspense>
             </AppLayout>
-          </BrowserRouter>
+          </HashRouter>
             </BookingProvider>
           </SearchProvider>
         </AuthProvider>
