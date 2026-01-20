@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { bookingService } from '../../services/bookingService';
+import bookingService from '../../services/bookingService';
 import Button from '../../components/common/Button';
 import QRCodeDisplay from '../../components/booking/QRCodeDisplay';
 import LoadingSpinner from '../../components/common/LoadingSpinner';

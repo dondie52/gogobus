@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { bookingService } from '../../services/bookingService';
+import bookingService from '../../services/bookingService';
 import TicketCard from '../../components/tickets/TicketCard';
 import TicketTabs from '../../components/tickets/TicketTabs';
 import LoadingSpinner from '../../components/common/LoadingSpinner';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
-import { trackBookingComplete } from '../../utils/analytics';
+import { trackBookingCompleted } from '../../utils/analytics';
 import Button from '../../components/common/Button';
 import QRCodeDisplay from '../../components/booking/QRCodeDisplay';
 import { logInfo } from '../../utils/logger';
@@ -23,7 +23,7 @@ const BookingConfirmation = () => {
     
     // Track booking completion conversion
     const totalPrice = ((selectedRoute?.price || 150) * (selectedSeats?.length || passengerDetails?.length || 0)) + 5;
-    trackBookingComplete({
+    trackBookingCompleted({
       bookingId: booking.id,
       transactionId: booking.id,
       totalPrice: totalPrice,
