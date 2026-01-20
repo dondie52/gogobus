@@ -1,5 +1,6 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { logWarn, logInfo, logError } from '../utils/logger';
 import { SPLASH_DURATION } from '../utils/constants';
 import styles from './Splash.module.css';
@@ -8,7 +9,10 @@ const VALID_ROUTES = ['/onboarding', '/get-started', '/dashboard', '/profile'];
 
 const Splash = () => {
   const navigate = useNavigate();
+  const { user, loading, userProfile } = useAuth();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isEmailVerification, setIsEmailVerification] = useState(false);
+  const hasHandledVerification = useRef(false);
 
   // Parse URL hash parameters safely
   const parseHashParams = useCallback(() => {
@@ -26,7 +30,8 @@ const Splash = () => {
     const hashParams = parseHashParams();
     const accessToken = hashParams.get('access_token');
     const type = hashParams.get('type');
-    return !!(accessToken && type === 'email');
+    // Check for both 'email' (magic link) and 'signup' (email verification)
+    return !!(accessToken && (type === 'email' || type === 'signup'));
   }, [parseHashParams]);
 
   // Get stored user preferences
@@ -73,7 +78,46 @@ const Splash = () => {
     }
   }, [navigate, isNavigating, isEmailVerificationInProgress, getUserNavigationTarget]);
 
+  // Check for email verification on mount
   useEffect(() => {
+    if (isEmailVerificationInProgress()) {
+      logInfo('Email verification detected, setting flag...');
+      setIsEmailVerification(true);
+      // Don't clear the hash yet - Supabase needs to process the tokens first
+    }
+  }, [isEmailVerificationInProgress]);
+
+  // Handle redirect after email verification completes
+  useEffect(() => {
+    if (!isEmailVerification || loading || hasHandledVerification.current) {
+      return;
+    }
+
+    // User is now authenticated after email verification
+    if (user) {
+      hasHandledVerification.current = true;
+      logInfo('Email verification complete, redirecting user...');
+      
+      // Clear the hash params now that auth is complete
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      
+      // Check if user has completed their profile
+      if (userProfile?.full_name) {
+        // Profile exists, go to home
+        navigate('/home', { replace: true });
+      } else {
+        // New user, go to complete profile
+        navigate('/complete-profile', { replace: true });
+      }
+    }
+  }, [isEmailVerification, user, loading, userProfile, navigate]);
+
+  useEffect(() => {
+    // Skip normal navigation if email verification is in progress
+    if (isEmailVerification) {
+      return;
+    }
+
     // Early exit if email verification is detected
     if (isEmailVerificationInProgress()) {
       logInfo('Email verification detected, waiting for auth check...');
@@ -87,7 +131,7 @@ const Splash = () => {
     return () => {
       clearTimeout(navigationTimer);
     };
-  }, [handleNavigation, isEmailVerificationInProgress]);
+  }, [handleNavigation, isEmailVerificationInProgress, isEmailVerification]);
 
   // Handle cleanup on unmount
   useEffect(() => {

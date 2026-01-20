@@ -17,20 +17,24 @@ const OTPVerification = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Check if email is in URL hash (from magic link)
+    // Check if email is in URL hash (from magic link or email verification)
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const accessToken = hashParams.get('access_token');
     const type = hashParams.get('type');
     
-    if (accessToken && type === 'email') {
-      // Magic link authentication - Supabase will automatically process the token
+    // Handle both 'email' (magic link) and 'signup' (email verification)
+    if (accessToken && (type === 'email' || type === 'signup')) {
+      // Auth callback - Supabase will automatically process the token
       // The AuthContext's onAuthStateChange listener will handle the session
-      // Wait for auth state change instead of arbitrary timeout
       // Clear the hash after processing
       window.location.hash = '';
       
-      // Navigate to home - AuthContext will handle the session update
-      navigate('/home', { replace: true });
+      // Navigate appropriately - signup goes to complete-profile, magic link to home
+      if (type === 'signup') {
+        navigate('/complete-profile', { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
     }
   }, [navigate]);
 
