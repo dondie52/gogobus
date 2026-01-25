@@ -125,34 +125,55 @@ const SeatMap = ({
 
         {/* Seat Grid */}
         <div className={styles.seatGrid} role="group" aria-label="Bus seat selection">
-          {seatLayout.map(({ rowNumber, seats, isEmergencyRow, isBackRow }) => (
-            <React.Fragment key={rowNumber}>
-              {/* Emergency Exit Marker - Before Row */}
-              {isEmergencyRow && (
-                <div className={styles.emergencyMarker}>
-                  <div className={styles.emergencyLine} />
-                  <div className={styles.emergencyBadge}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                      <polyline points="16,17 21,12 16,7" />
-                      <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                    <span>Emergency Exit</span>
-                  </div>
-                  <div className={styles.emergencyLine} />
-                </div>
-              )}
+          {seatLayout.map(({ rowNumber, seats, isEmergencyRow, isBackRow }) => {
+            // Split seats into left and right sections
+            const leftSeats = seats.slice(0, isBackRow ? Math.ceil(backRowSeats / 2) : aisleAfter);
+            const rightSeats = seats.slice(isBackRow ? Math.ceil(backRowSeats / 2) : aisleAfter);
+            
+            // For emergency rows: separate outer seats (A, D) from inner seats (B, C)
+            // Layout: A (spacer) B | C (spacer) D
+            const shouldApplyEmergencySpacing = isEmergencyRow && !isBackRow && seats.length >= 4;
+            
+            const leftOuterSeats = shouldApplyEmergencySpacing && leftSeats.length > 0
+              ? [leftSeats[0]]
+              : [];
+            const leftInnerSeats = shouldApplyEmergencySpacing && leftSeats.length > 1
+              ? leftSeats.slice(1)
+              : leftSeats;
+            
+            const rightInnerSeats = shouldApplyEmergencySpacing && rightSeats.length > 1
+              ? rightSeats.slice(0, -1)
+              : rightSeats;
+            const rightOuterSeats = shouldApplyEmergencySpacing && rightSeats.length > 0
+              ? [rightSeats[rightSeats.length - 1]]
+              : [];
 
-              {/* Seat Row */}
+            return (
               <div 
-                className={`${styles.seatRow} ${isBackRow ? styles.backRow : ''}`}
+                key={rowNumber}
+                className={`${styles.seatRow} ${isBackRow ? styles.backRow : ''} ${isEmergencyRow ? styles.emergencyRow : ''}`}
                 role="row"
-                aria-label={`Row ${rowNumber}`}
+                aria-label={`Row ${rowNumber}${isEmergencyRow ? ', emergency exit row' : ''}`}
               >
                 <span className={styles.rowLabel}>{rowNumber}</span>
                 
                 <div className={styles.leftSection}>
-                  {seats.slice(0, isBackRow ? Math.ceil(backRowSeats / 2) : aisleAfter).map((seat) => (
+                  {leftOuterSeats.map((seat) => (
+                    <Seat
+                      key={seat.id}
+                      seatId={seat.id}
+                      isOccupied={seat.isOccupied}
+                      isSelected={seat.isSelected}
+                      isEmergencyRow={seat.isEmergencyRow}
+                      onSelect={() => handleSeatToggle(seat.id)}
+                      onKeyDown={(e) => handleKeyDown(e, seat.id)}
+                      disabled={seat.isOccupied || (!seat.isSelected && selectedSeats.length >= maxSelectable)}
+                    />
+                  ))}
+                  {shouldApplyEmergencySpacing && leftOuterSeats.length > 0 && leftInnerSeats.length > 0 && (
+                    <div className={styles.emergencySpacer} aria-hidden="true" />
+                  )}
+                  {leftInnerSeats.map((seat) => (
                     <Seat
                       key={seat.id}
                       seatId={seat.id}
@@ -169,7 +190,22 @@ const SeatMap = ({
                 {!isBackRow && <div className={styles.aisle} aria-hidden="true" />}
 
                 <div className={styles.rightSection}>
-                  {seats.slice(isBackRow ? Math.ceil(backRowSeats / 2) : aisleAfter).map((seat) => (
+                  {rightInnerSeats.map((seat) => (
+                    <Seat
+                      key={seat.id}
+                      seatId={seat.id}
+                      isOccupied={seat.isOccupied}
+                      isSelected={seat.isSelected}
+                      isEmergencyRow={seat.isEmergencyRow}
+                      onSelect={() => handleSeatToggle(seat.id)}
+                      onKeyDown={(e) => handleKeyDown(e, seat.id)}
+                      disabled={seat.isOccupied || (!seat.isSelected && selectedSeats.length >= maxSelectable)}
+                    />
+                  ))}
+                  {shouldApplyEmergencySpacing && rightInnerSeats.length > 0 && rightOuterSeats.length > 0 && (
+                    <div className={styles.emergencySpacer} aria-hidden="true" />
+                  )}
+                  {rightOuterSeats.map((seat) => (
                     <Seat
                       key={seat.id}
                       seatId={seat.id}
@@ -185,8 +221,8 @@ const SeatMap = ({
 
                 <span className={styles.rowLabel}>{rowNumber}</span>
               </div>
-            </React.Fragment>
-          ))}
+            );
+          })}
         </div>
 
         {/* Bus Rear */}

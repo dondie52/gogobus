@@ -271,62 +271,46 @@
 }
 
 /* ==========================================================================
-   Emergency Exit
+   Emergency Exit Row Spacing
    ========================================================================== */
 
-.emergencyMarker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  margin: 8px 0;
+.emergencyRow {
+  /* Emergency rows use visual spacing instead of badges */
 }
 
-.emergencyLine {
-  flex: 1;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--emergency-border),
-    transparent
-  );
-}
-
-.emergencyBadge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--emergency-bg);
-  border: 2px solid var(--emergency-border);
-  border-radius: var(--radius-lg);
-  color: var(--emergency-text);
-  animation: emergencyPulse 2s ease-in-out infinite;
-}
-
-@keyframes emergencyPulse {
-  0%, 100% { 
-    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
-  }
-  50% { 
-    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
-  }
-}
-
-.emergencyBadge svg {
-  width: 18px;
-  height: 18px;
+.emergencySpacer {
+  width: 28px;
   flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.emergencyBadge span {
-  font-family: var(--font-display);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
+/* Visual indicator for emergency exit spacing - subtle vertical line */
+.emergencySpacer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--emergency-border) 20%,
+    var(--emergency-border) 80%,
+    transparent 100%
+  );
+  opacity: 0.5;
+  border-radius: 1px;
+}
+
+/* Ensure proper spacing in emergency rows */
+.emergencyRow .leftSection,
+.emergencyRow .rightSection {
+  gap: 6px;
 }
 
 /* ==========================================================================
@@ -486,8 +470,8 @@
     font-size: 0.6875rem;
   }
   
-  .emergencyBadge span {
-    font-size: 0.625rem;
+  .emergencySpacer {
+    width: 20px;
   }
 }
 
@@ -520,10 +504,6 @@
     box-shadow: none !important;
   }
   
-  .emergencyBadge {
-    animation: none !important;
-  }
-  
   .windowGlare,
   .steeringWheel {
     animation: none !important;
@@ -537,7 +517,6 @@
 @media (prefers-reduced-motion: reduce) {
   .windowGlare,
   .steeringWheel,
-  .emergencyBadge,
   .selectionSummary,
   .seatChip {
     animation: none !important;
