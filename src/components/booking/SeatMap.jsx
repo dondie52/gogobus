@@ -168,12 +168,6 @@ const SeatMap = ({
                 role="row"
                 aria-label={`Row ${rowNumber}${isEmergencyRow ? ', emergency exit row' : ''}`}
               >
-                {isEmergencyRow && (
-                  <div className={styles.emergencyExitBadge} aria-label="Emergency exit row">
-                    <span className={styles.emergencyExitIcon}>⚠</span>
-                    <span>Emergency Exit</span>
-                  </div>
-                )}
                 <span 
                   className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''} ${isEmergencyRow && visibleTooltip === rowNumber ? styles.tooltipVisible : ''}`}
                   title={isEmergencyRow ? 'Emergency exit' : undefined}
