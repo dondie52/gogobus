@@ -379,6 +379,52 @@
 .emergencyRow {
   position: relative;
   /* Emergency rows use visual spacing and side window indicators */
+  margin-top: 8px;
+  padding-top: 28px;
+}
+
+/* Emergency Exit Badge */
+.emergencyExitBadge {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+  box-shadow: 
+    0 2px 8px rgba(220, 38, 38, 0.4),
+    0 0 0 2px rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+  z-index: 10;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    box-shadow: 
+      0 2px 8px rgba(220, 38, 38, 0.4),
+      0 0 0 2px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 2px 12px rgba(220, 38, 38, 0.6),
+      0 0 0 3px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.emergencyExitIcon {
+  font-size: 0.875rem;
+  line-height: 1;
 }
 
 /* Emergency exit window indicators on bus sides */
