@@ -202,6 +202,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: visible;
 }
 
 .seatRow {
@@ -211,6 +212,8 @@
   gap: 6px;
   padding: 4px 0;
   transition: background var(--transition-fast);
+  position: relative;
+  overflow: visible;
 }
 
 .seatRow:hover {
@@ -258,9 +261,9 @@
 .emergencyRowLabel[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%) translateY(-8px);
+  transform: translateX(-50%);
   padding: 6px 10px;
   background: var(--emergency-text);
   color: var(--emergency-bg);
@@ -272,18 +275,19 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-fast), visibility var(--transition-fast), transform var(--transition-fast);
-  z-index: 1000;
+  z-index: 10000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   font-family: var(--font-display);
   letter-spacing: 0.02em;
+  margin-bottom: 4px;
 }
 
 .emergencyRowLabel[data-tooltip]::before {
   content: '';
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 2px);
   left: 50%;
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateX(-50%);
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
@@ -293,7 +297,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-fast), visibility var(--transition-fast), transform var(--transition-fast);
-  z-index: 1001;
+  z-index: 10001;
 }
 
 /* Show tooltip on hover (desktop) */
@@ -301,7 +305,7 @@
 .emergencyRowLabel[data-tooltip]:hover::before {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%);
 }
 
 /* Show tooltip on touch/active (mobile) */
@@ -311,7 +315,7 @@
 .emergencyRowLabel[data-tooltip]:focus::before {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%);
 }
 
 /* Keep tooltip visible on touch devices */
@@ -320,7 +324,15 @@
   .emergencyRowLabel[data-tooltip]:active::before {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%);
+  }
+  
+  /* Show tooltip on tap and keep it visible longer */
+  .emergencyRowLabel[data-tooltip].tooltipVisible::after,
+  .emergencyRowLabel[data-tooltip].tooltipVisible::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%);
   }
 }
 

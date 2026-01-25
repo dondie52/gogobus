@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import Seat from './Seat';
 import styles from './SeatMap.module.css';
 
@@ -92,6 +92,23 @@ const SeatMap = ({
     }
   }, [handleSeatToggle]);
 
+  // State for mobile tooltip visibility
+  const [visibleTooltip, setVisibleTooltip] = useState(null);
+
+  // Handle touch events for mobile tooltip
+  const handleTouchStart = useCallback((e, rowNumber) => {
+    e.stopPropagation();
+    setVisibleTooltip(rowNumber);
+    // Hide tooltip after 2 seconds on mobile
+    setTimeout(() => {
+      setVisibleTooltip(null);
+    }, 2000);
+  }, []);
+
+  const handleTouchEnd = useCallback((e) => {
+    e.stopPropagation();
+  }, []);
+
   return (
     <div className={styles.seatMapWrapper}>
       {/* Bus Frame */}
@@ -156,9 +173,11 @@ const SeatMap = ({
                 aria-label={`Row ${rowNumber}${isEmergencyRow ? ', emergency exit row' : ''}`}
               >
                 <span 
-                  className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''}`}
+                  className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''} ${isEmergencyRow && visibleTooltip === rowNumber ? styles.tooltipVisible : ''}`}
                   title={isEmergencyRow ? 'Emergency exit' : undefined}
                   data-tooltip={isEmergencyRow ? 'Emergency exit' : undefined}
+                  onTouchStart={isEmergencyRow ? (e) => handleTouchStart(e, rowNumber) : undefined}
+                  onTouchEnd={isEmergencyRow ? handleTouchEnd : undefined}
                 >
                   {rowNumber}
                 </span>
@@ -226,9 +245,11 @@ const SeatMap = ({
                 </div>
 
                 <span 
-                  className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''}`}
+                  className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''} ${isEmergencyRow && visibleTooltip === rowNumber ? styles.tooltipVisible : ''}`}
                   title={isEmergencyRow ? 'Emergency exit' : undefined}
                   data-tooltip={isEmergencyRow ? 'Emergency exit' : undefined}
+                  onTouchStart={isEmergencyRow ? (e) => handleTouchStart(e, rowNumber) : undefined}
+                  onTouchEnd={isEmergencyRow ? handleTouchEnd : undefined}
                 >
                   {rowNumber}
                 </span>
