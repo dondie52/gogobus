@@ -97,17 +97,31 @@ const SeatMap = ({
 
   // Handle touch events for mobile tooltip
   const handleTouchStart = useCallback((e, rowNumber) => {
+    e.preventDefault();
     e.stopPropagation();
     setVisibleTooltip(rowNumber);
-    // Hide tooltip after 2 seconds on mobile
+    // Hide tooltip after 3 seconds on mobile
     setTimeout(() => {
       setVisibleTooltip(null);
-    }, 2000);
+    }, 3000);
   }, []);
 
   const handleTouchEnd = useCallback((e) => {
     e.stopPropagation();
   }, []);
+
+  // Also handle click as fallback for mobile
+  const handleClick = useCallback((e, rowNumber) => {
+    e.stopPropagation();
+    if (visibleTooltip === rowNumber) {
+      setVisibleTooltip(null);
+    } else {
+      setVisibleTooltip(rowNumber);
+      setTimeout(() => {
+        setVisibleTooltip(null);
+      }, 3000);
+    }
+  }, [visibleTooltip]);
 
   return (
     <div className={styles.seatMapWrapper}>
@@ -250,6 +264,7 @@ const SeatMap = ({
                   data-tooltip={isEmergencyRow ? 'Emergency exit' : undefined}
                   onTouchStart={isEmergencyRow ? (e) => handleTouchStart(e, rowNumber) : undefined}
                   onTouchEnd={isEmergencyRow ? handleTouchEnd : undefined}
+                  onClick={isEmergencyRow ? (e) => handleClick(e, rowNumber) : undefined}
                 >
                   {rowNumber}
                 </span>
