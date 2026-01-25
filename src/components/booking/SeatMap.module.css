@@ -242,7 +242,7 @@
 }
 
 .emergencyRowLabel {
-  color: var(--emergency-border) !important;
+  color: #DC2626 !important;
   cursor: help;
   text-decoration: underline;
   text-decoration-color: transparent;
@@ -254,8 +254,8 @@
 .emergencyRowLabel:hover,
 .emergencyRowLabel:active,
 .emergencyRowLabel:focus {
-  text-decoration-color: var(--emergency-border);
-  color: var(--emergency-text) !important;
+  text-decoration-color: #DC2626;
+  color: #B91C1C !important;
 }
 
 /* Tooltip for mobile and desktop */
@@ -266,8 +266,8 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 12px;
-  background: var(--emergency-text);
-  color: var(--emergency-bg);
+  background: #DC2626;
+  color: white;
   font-size: 0.75rem;
   font-weight: 700;
   white-space: nowrap;
@@ -277,7 +277,7 @@
   visibility: hidden;
   transition: opacity var(--transition-fast), visibility var(--transition-fast), transform var(--transition-fast);
   z-index: 10000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
   font-family: var(--font-display);
   letter-spacing: 0.02em;
   width: max-content;
@@ -296,7 +296,7 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid var(--emergency-text);
+  border-top: 5px solid #DC2626;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
