@@ -160,24 +160,6 @@ const SeatMap = ({
             // Split seats into left and right sections
             const leftSeats = seats.slice(0, isBackRow ? Math.ceil(backRowSeats / 2) : aisleAfter);
             const rightSeats = seats.slice(isBackRow ? Math.ceil(backRowSeats / 2) : aisleAfter);
-            
-            // For emergency rows: separate outer seats (A, D) from inner seats (B, C)
-            // Layout: A (spacer) B | C (spacer) D
-            const shouldApplyEmergencySpacing = isEmergencyRow && !isBackRow && seats.length >= 4;
-            
-            const leftOuterSeats = shouldApplyEmergencySpacing && leftSeats.length > 0
-              ? [leftSeats[0]]
-              : [];
-            const leftInnerSeats = shouldApplyEmergencySpacing && leftSeats.length > 1
-              ? leftSeats.slice(1)
-              : leftSeats;
-            
-            const rightInnerSeats = shouldApplyEmergencySpacing && rightSeats.length > 1
-              ? rightSeats.slice(0, -1)
-              : rightSeats;
-            const rightOuterSeats = shouldApplyEmergencySpacing && rightSeats.length > 0
-              ? [rightSeats[rightSeats.length - 1]]
-              : [];
 
             return (
               <div 
@@ -197,22 +179,7 @@ const SeatMap = ({
                 </span>
                 
                 <div className={styles.leftSection}>
-                  {leftOuterSeats.map((seat) => (
-                    <Seat
-                      key={seat.id}
-                      seatId={seat.id}
-                      isOccupied={seat.isOccupied}
-                      isSelected={seat.isSelected}
-                      isEmergencyRow={seat.isEmergencyRow}
-                      onSelect={() => handleSeatToggle(seat.id)}
-                      onKeyDown={(e) => handleKeyDown(e, seat.id)}
-                      disabled={seat.isOccupied || (!seat.isSelected && selectedSeats.length >= maxSelectable)}
-                    />
-                  ))}
-                  {shouldApplyEmergencySpacing && leftOuterSeats.length > 0 && leftInnerSeats.length > 0 && (
-                    <div className={styles.emergencySpacer} aria-hidden="true" />
-                  )}
-                  {leftInnerSeats.map((seat) => (
+                  {leftSeats.map((seat) => (
                     <Seat
                       key={seat.id}
                       seatId={seat.id}
@@ -229,22 +196,7 @@ const SeatMap = ({
                 {!isBackRow && <div className={styles.aisle} aria-hidden="true" />}
 
                 <div className={styles.rightSection}>
-                  {rightInnerSeats.map((seat) => (
-                    <Seat
-                      key={seat.id}
-                      seatId={seat.id}
-                      isOccupied={seat.isOccupied}
-                      isSelected={seat.isSelected}
-                      isEmergencyRow={seat.isEmergencyRow}
-                      onSelect={() => handleSeatToggle(seat.id)}
-                      onKeyDown={(e) => handleKeyDown(e, seat.id)}
-                      disabled={seat.isOccupied || (!seat.isSelected && selectedSeats.length >= maxSelectable)}
-                    />
-                  ))}
-                  {shouldApplyEmergencySpacing && rightInnerSeats.length > 0 && rightOuterSeats.length > 0 && (
-                    <div className={styles.emergencySpacer} aria-hidden="true" />
-                  )}
-                  {rightOuterSeats.map((seat) => (
+                  {rightSeats.map((seat) => (
                     <Seat
                       key={seat.id}
                       seatId={seat.id}
