@@ -5,6 +5,7 @@ import { trackBookingCompleted } from '../../utils/analytics';
 import Button from '../../components/common/Button';
 import QRCodeDisplay from '../../components/booking/QRCodeDisplay';
 import { logInfo } from '../../utils/logger';
+import emailService from '../../services/emailService';
 import styles from './Booking.module.css';
 
 const BookingConfirmation = () => {
@@ -38,6 +39,25 @@ const BookingConfirmation = () => {
       destination: selectedRoute?.destination,
       date: selectedRoute?.date,
     });
+    
+    // Send booking confirmation email (non-blocking, as fallback)
+    const passengerEmail = passengerDetails?.[0]?.email || booking.passenger_email;
+    if (passengerEmail && booking.id) {
+      emailService.sendBookingConfirmation({
+        bookingId: booking.id,
+        customerEmail: passengerEmail,
+        customerName: passengerDetails?.[0]?.fullName || passengerDetails?.[0]?.name || booking.passenger_name || 'Customer',
+        origin: selectedRoute?.origin || booking.origin || 'Unknown',
+        destination: selectedRoute?.destination || booking.destination || 'Unknown',
+        departureTime: selectedRoute?.departure_time || booking.departure_time || '',
+        seats: selectedSeats || booking.seats || [],
+        totalAmount: booking.total_amount || booking.total_price || totalPrice,
+        bookingRef: booking.booking_ref || booking.id,
+      }).catch(err => {
+        // Email sending is non-critical - just log
+        console.warn('Email sending failed (non-critical):', err);
+      });
+    }
     
     const timer = setTimeout(() => setIsLoaded(true), 100);
     const confettiTimer = setTimeout(() => setShowConfetti(false), 4000);

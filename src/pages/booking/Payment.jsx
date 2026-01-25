@@ -5,6 +5,7 @@ import { useBooking } from '../../context/BookingContext';
 import paymentService from '../../services/paymentService';
 import bookingService from '../../services/bookingService';
 import { logError } from '../../utils/logger';
+import { USE_MOCK_PAYMENTS } from '../../utils/constants';
 import styles from './Payment.module.css';
 
 // ==================== ICONS ====================
@@ -106,7 +107,7 @@ const PaymentIcons = {
     </div>
   ),
   bank: () => <Icons.Building />,
-  cash: () => <Icons.Cash />,
+  cash: () => <span style={{ fontSize: '32px' }}>💵</span>,
 };
 
 // ==================== MAIN COMPONENT ====================
@@ -184,15 +185,40 @@ export default function Payment() {
       let bookingId = booking?.id;
       if (!bookingId && selectedRoute?.id && user?.id && selectedSeats?.length > 0 && passengerDetails?.length > 0) {
         // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:186',message:'Creating booking - before validation',data:{hasPriceBreakdown:!!priceBreakdown,priceBreakdownTotal:priceBreakdown?.total,priceBreakdownBase:priceBreakdown?.baseAmount,priceBreakdownService:priceBreakdown?.serviceFee,priceBreakdownPayment:priceBreakdown?.paymentFee,selectedRouteId:selectedRoute?.id,userId:user?.id,seatsCount:selectedSeats?.length,passengersCount:passengerDetails?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'L'})}).catch(()=>{});
         // #endregion
 
+        // Ensure priceBreakdown is calculated
+        let finalPriceBreakdown = priceBreakdown;
+        if (!finalPriceBreakdown || finalPriceBreakdown.total === null || finalPriceBreakdown.total === undefined) {
+          // Recalculate if missing
+          const baseAmount = bookingData.basePrice || totalBasePrice;
+          const serviceFeeAmount = bookingData.serviceFee || serviceFee;
+          finalPriceBreakdown = paymentService.calculateTotal(
+            baseAmount,
+            serviceFeeAmount,
+            selectedMethod
+          );
+          setPriceBreakdown(finalPriceBreakdown);
+          // #region agent log
+          fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:192',message:'Recalculated priceBreakdown',data:{recalculatedTotal:finalPriceBreakdown.total,baseAmount,serviceFeeAmount,selectedMethod},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'L'})}).catch(()=>{});
+          // #endregion
+        }
+
+        const finalTotal = finalPriceBreakdown?.total || (bookingData.basePrice || totalBasePrice) + (bookingData.serviceFee || serviceFee);
+        
+        if (!finalTotal || finalTotal <= 0) {
+          throw new Error('Invalid booking total. Please refresh and try again.');
+        }
+
         const firstPassenger = passengerDetails[0];
-        const bookingData = {
+        const bookingDataToSend = {
           schedule_id: selectedRoute.id,
           user_id: user.id,
           seats: selectedSeats,
           passengers: passengerDetails,
-          total_amount: priceBreakdown.total,
+          total_amount: finalTotal,
+          total_price: finalTotal, // Include both for compatibility
           passenger_name: firstPassenger?.fullName || firstPassenger?.name || 'Guest',
           passenger_email: firstPassenger?.email || user?.email || '',
           passenger_phone: firstPassenger?.phone || '',
@@ -203,10 +229,15 @@ export default function Payment() {
           status: 'pending',
         };
 
-        const createdBooking = await bookingService.createBooking(bookingData);
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:210',message:'Sending booking data',data:{total_amount:bookingDataToSend.total_amount,total_price:bookingDataToSend.total_price,schedule_id:bookingDataToSend.schedule_id,user_id:bookingDataToSend.user_id,seatsCount:bookingDataToSend.seats?.length,passengersCount:bookingDataToSend.passengers?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'L'})}).catch(()=>{});
+        // #endregion
+
+        const createdBooking = await bookingService.createBooking(bookingDataToSend);
         bookingId = createdBooking.id;
 
         // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:217',message:'Booking created successfully',data:{bookingId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'L'})}).catch(()=>{});
         // #endregion
       }
 
@@ -215,9 +246,10 @@ export default function Payment() {
       }
 
       const passenger = bookingData.passenger || passengerDetails?.[0] || {};
+      const finalAmount = priceBreakdown?.total || (bookingData.basePrice || totalBasePrice) + (bookingData.serviceFee || serviceFee);
       const paymentData = {
         bookingId: bookingId,
-        amount: priceBreakdown.total,
+        amount: finalAmount,
         paymentMethod: selectedMethod,
         customerName: passenger.name || passenger.fullName || passenger.full_name || user?.user_metadata?.full_name || 'Guest',
         customerEmail: passenger.email || user?.email || '',
@@ -234,18 +266,25 @@ export default function Payment() {
         throw new Error(result.error);
       }
 
-      // Handle different payment methods
-      const method = paymentService.PAYMENT_METHODS[selectedMethod.toUpperCase()];
-
-      if (method.provider === 'manual') {
-        // For cash/bank transfer, go directly to confirmation
+      // When mock payments are enabled, always navigate to confirmation
+      // Real payment gateway flows are bypassed
+      if (USE_MOCK_PAYMENTS) {
+        // Mock payment flow - navigate directly to confirmation
         navigate(`/booking/confirmation?ref=${result.transactionRef}&method=${selectedMethod}`);
-      } else if (result.paymentUrl) {
-        // Redirect to payment gateway
-        window.location.href = result.paymentUrl;
       } else {
-        // Shouldn't happen, but handle gracefully
-        navigate(`/booking/confirmation?ref=${result.transactionRef}`);
+        // Real payment gateway flow
+        const method = paymentService.PAYMENT_METHODS[selectedMethod.toUpperCase()];
+
+        if (method.provider === 'manual') {
+          // For cash/bank transfer, go directly to confirmation
+          navigate(`/booking/confirmation?ref=${result.transactionRef}&method=${selectedMethod}`);
+        } else if (result.paymentUrl) {
+          // Redirect to payment gateway
+          window.location.href = result.paymentUrl;
+        } else {
+          // Shouldn't happen, but handle gracefully
+          navigate(`/booking/confirmation?ref=${result.transactionRef}`);
+        }
       }
 
     } catch (err) {
@@ -382,6 +421,17 @@ export default function Payment() {
             ))}
           </div>
         </div>
+
+        {/* Mock Payment Notice */}
+        {USE_MOCK_PAYMENTS && (
+          <div className={styles.mockPaymentNotice}>
+            <Icons.Shield />
+            <div className={styles.mockPaymentText}>
+              <strong>Payment will be completed at the station.</strong>
+              <span>Ticket reserved now.</span>
+            </div>
+          </div>
+        )}
 
         {/* Price Breakdown */}
         {priceBreakdown && (

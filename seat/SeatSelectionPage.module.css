@@ -169,111 +169,6 @@
 }
 
 /* ==========================================================================
-   Passenger Selector
-   ========================================================================== */
-
-.passengerSelector {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.passengerLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.passengerLabel svg {
-  width: 18px;
-  height: 18px;
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.passengerControls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: center;
-}
-
-.passengerBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 2px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  flex-shrink: 0;
-}
-
-.passengerBtn:hover:not(:disabled) {
-  background: var(--primary-light);
-  border-color: var(--primary);
-  color: var(--primary);
-  transform: scale(1.05);
-}
-
-.passengerBtn:active:not(:disabled) {
-  transform: scale(0.95);
-}
-
-.passengerBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.passengerBtn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.passengerInput {
-  width: 80px;
-  height: 44px;
-  padding: 0 12px;
-  border: 2px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-primary);
-  border-radius: var(--radius-md);
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 700;
-  text-align: center;
-  transition: all var(--transition-normal);
-  -moz-appearance: textfield;
-}
-
-.passengerInput::-webkit-outer-spin-button,
-.passengerInput::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.passengerInput:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-light);
-}
-
-.passengerInput:hover {
-  border-color: var(--primary);
-}
-
-/* ==========================================================================
    Legend
    ========================================================================== */
 
@@ -521,20 +416,6 @@
 :global(.dark-mode) .spinner {
   border-color: var(--border-color);
   border-top-color: var(--primary);
-}
-
-:global(.dark-mode) .passengerSelector {
-  border-top-color: var(--border-color);
-}
-
-:global(.dark-mode) .passengerBtn {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-}
-
-:global(.dark-mode) .passengerInput {
-  background: var(--card-bg);
-  border-color: var(--border-color);
 }
 
 /* ==========================================================================

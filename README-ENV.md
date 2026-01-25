@@ -25,6 +25,16 @@ This guide explains how to set up environment variables for the GOGOBUS applicat
 - Keep using hardcoded values (for development)
 - Move them to `.env` for better security (recommended for production)
 
+### 🤖 AI Chat Support (Google Gemini)
+
+For AI-powered chat support functionality:
+- `VITE_GOOGLE_AI_API_KEY` - Google AI API key for Gemini
+
+**For production**, this key should be set as a Supabase Edge Function secret:
+- `GOOGLE_AI_API_KEY` - Set in Supabase Dashboard → Settings → Edge Functions → Secrets
+
+Get your API key from: [Google AI Studio](https://makersuite.google.com/app/apikey)
+
 ### 🔐 Optional (Payment Providers)
 
 The payment service **will work without these** (using mock responses for development), but you'll need them for production payment processing:
@@ -145,7 +155,8 @@ Webhooks are handled via Supabase Edge Functions. To set up:
 2. **Set Webhook Secrets:**
    - Go to Supabase Dashboard → Settings → Edge Functions → Secrets
    - Add `WEBHOOK_SECRET_DPO` and `WEBHOOK_SECRET_ORANGE`
-   - These are used to verify webhook signatures
+   - Add `GOOGLE_AI_API_KEY` for AI chat support
+   - These are used to verify webhook signatures and for AI functionality
 
 3. **Configure Webhook URLs:**
    - DPO: Set webhook URL in DPO merchant dashboard to: `https://your-project.supabase.co/functions/v1/payment-webhook-dpo`

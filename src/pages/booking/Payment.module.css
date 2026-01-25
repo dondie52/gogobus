@@ -333,6 +333,43 @@
   text-align: center;
 }
 
+/* ==================== MOCK PAYMENT NOTICE ==================== */
+
+.mockPaymentNotice {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.mockPaymentNotice svg {
+  color: #f59e0b;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.mockPaymentText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mockPaymentText strong {
+  font-size: 14px;
+  color: var(--color-gray-800);
+  font-weight: 600;
+}
+
+.mockPaymentText span {
+  font-size: 12px;
+  color: var(--color-gray-600);
+}
+
 /* ==================== PAY BUTTON ==================== */
 
 .payButton {

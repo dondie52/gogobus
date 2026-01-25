@@ -159,3 +159,14 @@ export const ACCOUNT_LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
 
 /** Rate limit window for password reset (milliseconds) */
 export const PASSWORD_RESET_RATE_LIMIT = 60 * 1000; // 1 minute
+
+// ============================================================
+// PAYMENT CONFIGURATION
+// ============================================================
+
+/**
+ * Use mock payment bypass instead of real payment gateways
+ * Set VITE_USE_MOCK_PAYMENTS=false to enable real payment integration
+ * Defaults to true for development/testing
+ */
+export const USE_MOCK_PAYMENTS = import.meta.env.VITE_USE_MOCK_PAYMENTS !== 'false';

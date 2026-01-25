@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { SearchProvider } from './context/SearchContext';
 import { BookingProvider } from './context/BookingContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -14,37 +14,97 @@ import { trackPageView } from './utils/analytics';
 import { initPerformanceMonitoring } from './utils/performance';
 import { supabase } from './services/supabase';
 
+// Helper function to safely lazy load components with error handling
+// This prevents React's lazy() from encountering errors that can't be stringified
+const safeLazy = (importFn, componentName = 'Unknown') => {
+  return lazy(() => {
+    // Wrap in Promise.resolve to ensure we always return a promise
+    return Promise.resolve(importFn())
+      .then((module) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:25',message:'Lazy component loaded successfully',data:{componentName,hasDefault:!!module?.default,moduleKeys:module ? Object.keys(module).join(',') : 'null'},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+        // #endregion
+        if (!module || !module.default) {
+          const errorMsg = `Component ${componentName} does not have a default export. Available exports: ${module ? Object.keys(module).join(', ') : 'none'}`;
+          console.error(errorMsg);
+          // Return a fallback component instead of throwing
+          return {
+            default: () => {
+              return React.createElement('div', { 
+                style: { padding: '20px', textAlign: 'center', color: '#dc2626' } 
+              }, `Error: ${errorMsg}`);
+            }
+          };
+        }
+        return module;
+      })
+      .catch((error) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:38',message:'Lazy component load error',data:{componentName,errorMessage:error?.message || 'Unknown error',errorName:error?.name,errorType:typeof error},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
+        // #endregion
+        // Ensure error can be stringified by extracting message safely
+        let errorMessage = 'Failed to load component';
+        try {
+          if (error && typeof error === 'object') {
+            errorMessage = error.message || error.toString() || 'Unknown error';
+          } else if (error) {
+            errorMessage = String(error);
+          }
+        } catch (e) {
+          errorMessage = `Failed to load component ${componentName}`;
+        }
+        
+        console.error(`Failed to load lazy component ${componentName}:`, errorMessage);
+        
+        // Return a default component that shows an error
+        return {
+          default: () => {
+            return React.createElement('div', { 
+              style: { padding: '20px', textAlign: 'center', color: '#dc2626' } 
+            }, `Failed to load component: ${componentName}`);
+          }
+        };
+      });
+  });
+};
+
 // Lazy load pages for code splitting
-const Splash = lazy(() => import('./pages/Splash'));
-const OnboardingFlow = lazy(() => import('./pages/onboarding/OnboardingFlow'));
-const GetStarted = lazy(() => import('./pages/auth/GetStarted'));
-const Login = lazy(() => import('./pages/auth/Login'));
-const SignUp = lazy(() => import('./pages/auth/SignUp'));
-const OTPVerification = lazy(() => import('./pages/auth/OTPVerification'));
-const CompleteProfile = lazy(() => import('./pages/auth/CompleteProfile'));
-const Home = lazy(() => import('./pages/home/Home'));
-const SearchResults = lazy(() => import('./pages/search/SearchResults'));
-const SeatSelection = lazy(() => import('./pages/booking/SeatSelection'));
-const PassengerDetails = lazy(() => import('./pages/booking/PassengerDetails'));
-const BookingSummary = lazy(() => import('./pages/booking/BookingSummary'));
-const Payment = lazy(() => import('./pages/booking/Payment'));
-const PaymentConfirmation = lazy(() => import('./pages/booking/PaymentConfirmation'));
-const BookingConfirmation = lazy(() => import('./pages/booking/BookingConfirmation'));
-const MyTickets = lazy(() => import('./pages/tickets/MyTickets'));
-const TicketView = lazy(() => import('./pages/tickets/TicketView'));
-const Profile = lazy(() => import('./pages/profile/Profile'));
-const Help = lazy(() => import('./pages/help/Help'));
-const Notifications = lazy(() => import('./pages/notifications/Notifications'));
-const BecomePartner = lazy(() => import('./pages/partner/BecomePartner'));
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
-const QRScanner = lazy(() => import('./pages/admin/QRScanner'));
+const Splash = safeLazy(() => import('./pages/Splash'), 'Splash');
+const OnboardingFlow = safeLazy(() => import('./pages/onboarding/OnboardingFlow'), 'OnboardingFlow');
+const GetStarted = safeLazy(() => import('./pages/auth/GetStarted'), 'GetStarted');
+const Login = safeLazy(() => import('./pages/auth/Login'), 'Login');
+const SignUp = safeLazy(() => import('./pages/auth/SignUp'), 'SignUp');
+const OTPVerification = safeLazy(() => import('./pages/auth/OTPVerification'), 'OTPVerification');
+const CheckEmail = safeLazy(() => import('./pages/auth/CheckEmail'), 'CheckEmail');
+const CompleteProfile = safeLazy(() => import('./pages/auth/CompleteProfile'), 'CompleteProfile');
+const Home = safeLazy(() => import('./pages/home/Home'), 'Home');
+const SearchResults = safeLazy(() => import('./pages/search/SearchResults'), 'SearchResults');
+const SeatSelection = safeLazy(() => import('./pages/booking/SeatSelection'), 'SeatSelection');
+const PassengerDetails = safeLazy(() => import('./pages/booking/PassengerDetails'), 'PassengerDetails');
+const BookingSummary = safeLazy(() => import('./pages/booking/BookingSummary'), 'BookingSummary');
+const Payment = safeLazy(() => import('./pages/booking/Payment'), 'Payment');
+const PaymentConfirmation = safeLazy(() => import('./pages/booking/PaymentConfirmation'), 'PaymentConfirmation');
+const BookingConfirmation = safeLazy(() => import('./pages/booking/BookingConfirmation'), 'BookingConfirmation');
+const MyTickets = safeLazy(() => import('./pages/tickets/MyTickets'), 'MyTickets');
+const TicketView = safeLazy(() => import('./pages/tickets/TicketView'), 'TicketView');
+const Profile = safeLazy(() => import('./pages/profile/Profile'), 'Profile');
+const Help = safeLazy(() => import('./pages/help/Help'), 'Help');
+const Notifications = safeLazy(() => import('./pages/notifications/Notifications'), 'Notifications');
+const BecomePartner = safeLazy(() => import('./pages/partner/BecomePartner'), 'BecomePartner');
+const AdminDashboard = safeLazy(() => import('./pages/admin/AdminDashboard'), 'AdminDashboard');
+const QRScanner = safeLazy(() => import('./pages/admin/QRScanner'), 'QRScanner');
 
 // Loading fallback component
-const PageLoader = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-    <LoadingSpinner size="large" />
-  </div>
-);
+const PageLoader = () => {
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:PageLoader',message:'PageLoader (Suspense fallback) rendering',data:{hash:window.location.hash,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'J'})}).catch(()=>{});
+  // #endregion
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <LoadingSpinner size="large" />
+    </div>
+  );
+};
 
 // Track page views on route changes
 function PageViewTracker() {
@@ -68,6 +128,20 @@ function PageViewTracker() {
   return null;
 }
 
+// Debug route matching and rendering
+function RouteDebugger() {
+  const location = useLocation();
+  const { user, loading } = useAuth();
+  
+  useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:RouteDebugger',message:'Route debug info',data:{pathname:location.pathname,hash:window.location.hash,hasUser:!!user,userId:user?.id,loading,expectedRoute:location.pathname === '/' ? 'Splash' : location.pathname === '/home' ? 'Home' : location.pathname === '/login' ? 'Login' : 'Other'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})}).catch(()=>{});
+    // #endregion
+  }, [location.pathname, user, loading]);
+  
+  return null;
+}
+
 // Check if URL hash contains Supabase auth tokens (not a route path)
 function hasAuthTokensInHash() {
   const hash = window.location.hash;
@@ -81,6 +155,9 @@ function hasAuthTokensInHash() {
 }
 
 function App() {
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:84',message:'App component rendering',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+  // #endregion
   const [isProcessingAuth, setIsProcessingAuth] = useState(() => hasAuthTokensInHash());
 
   // Handle Supabase auth callback before HashRouter processes the URL
@@ -173,6 +250,9 @@ function App() {
     );
   }
 
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:177',message:'Before rendering providers',data:{isProcessingAuth},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+  // #endregion
   return (
     <ErrorBoundary>
       <ThemeProvider>
@@ -189,7 +269,9 @@ function App() {
                 <CookieConsent />
                 <AppLayout>
               <Suspense fallback={<PageLoader />}>
-                <Routes>
+                <ErrorBoundary>
+                  <RouteDebugger />
+                  <Routes>
                   {/* Public Routes */}
                   <Route path="/" element={<Splash />} />
                   <Route path="/onboarding" element={<OnboardingFlow />} />
@@ -197,6 +279,7 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/otp-verification" element={<OTPVerification />} />
+                  <Route path="/check-email" element={<CheckEmail />} />
                   <Route path="/become-partner" element={<BecomePartner />} />
                   
                   {/* Protected Routes */}
@@ -334,6 +417,7 @@ function App() {
                   {/* Catch all - redirect to home or login */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
+                </ErrorBoundary>
               </Suspense>
             </AppLayout>
           </HashRouter>

@@ -8,6 +8,8 @@ import { supabase } from './supabase';
 import paymentErrors from '../utils/paymentErrors';
 import { validateAmount, validateEmail, validatePhone, validateUUID, sanitizeObject } from '../utils/validation';
 import { logError, logWarn } from '../utils/logger';
+import { USE_MOCK_PAYMENTS } from '../utils/constants';
+import emailService from './emailService';
 
 // ============================================================
 // CONFIGURATION
@@ -1120,13 +1122,170 @@ export const confirmManualPayment = async (transactionRef, adminUserId) => {
 };
 
 // ============================================================
+// MOCK PAYMENT (Bypass Gateway for Development/Testing)
+// ============================================================
+
+/**
+ * Generate a mock transaction reference
+ * Format: MOCK-<timestamp>
+ */
+const generateMockTransactionRef = () => {
+  const timestamp = Date.now();
+  return `MOCK-${timestamp}`;
+};
+
+/**
+ * Create a mock payment that immediately succeeds
+ * This bypasses all payment gateways and marks the booking as paid
+ * 
+ * TODO: When real payment gateway is integrated, set VITE_USE_MOCK_PAYMENTS=false
+ * to disable this function and use real payment flows
+ */
+export const mockConfirmPayment = async (paymentData) => {
+  const {
+    bookingId,
+    amount,
+    paymentMethod,
+    customerName,
+    customerEmail,
+    customerPhone,
+    description,
+  } = paymentData;
+
+  const transactionRef = generateMockTransactionRef();
+
+  try {
+    // Validate inputs
+    if (!bookingId) {
+      throw new Error('Booking ID is required');
+    }
+    if (!amount || amount <= 0) {
+      throw new Error('Invalid payment amount');
+    }
+
+    // Sanitize customer data
+    const sanitizedCustomerData = sanitizeObject({
+      customerEmail,
+      customerName,
+      customerPhone,
+      description,
+    });
+
+    // Create payment record with completed status
+    const { data: payment, error: dbError } = await supabase
+      .from('payments')
+      .insert({
+        booking_id: bookingId,
+        transaction_ref: transactionRef,
+        amount,
+        currency: 'BWP',
+        payment_method: paymentMethod,
+        provider: 'mock',
+        status: 'completed',
+        customer_email: sanitizedCustomerData.customerEmail,
+        customer_name: sanitizedCustomerData.customerName,
+        customer_phone: sanitizedCustomerData.customerPhone,
+        metadata: { 
+          description: sanitizedCustomerData.description,
+          is_mock: true,
+          note: 'Mock payment - payment will be completed at station',
+        },
+        completed_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (dbError) throw dbError;
+
+    // Update booking to paid status
+    const { error: bookingError } = await supabase
+      .from('bookings')
+      .update({
+        payment_status: 'paid',
+        payment_method: paymentMethod,
+        payment_reference: transactionRef,
+        status: 'confirmed',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', bookingId);
+
+    if (bookingError) {
+      logError('Failed to update booking status', bookingError);
+      // Payment was created, but booking update failed - still return success
+      // as the payment record exists and can be manually reconciled
+    }
+
+    // Send booking confirmation email (non-blocking)
+    try {
+      // Get booking details for email
+      const { data: bookingDetails } = await supabase
+        .from('bookings')
+        .select('*, schedule:schedules(departure_time, route:routes(origin, destination))')
+        .eq('id', bookingId)
+        .single();
+
+      if (bookingDetails) {
+        const schedule = bookingDetails.schedule;
+        const route = schedule?.route;
+        await emailService.sendBookingConfirmation({
+          bookingId: bookingDetails.id,
+          customerEmail: sanitizedCustomerData.customerEmail,
+          customerName: sanitizedCustomerData.customerName,
+          origin: bookingDetails.origin || route?.origin || 'Unknown',
+          destination: bookingDetails.destination || route?.destination || 'Unknown',
+          departureTime: bookingDetails.departure_time || schedule?.departure_time || '',
+          seats: Array.isArray(bookingDetails.seats) ? bookingDetails.seats : [],
+          totalAmount: amount,
+          bookingRef: bookingDetails.booking_ref || bookingDetails.id,
+        });
+      }
+    } catch (emailError) {
+      // Don't fail payment if email fails - just log it
+      logWarn('Failed to send booking confirmation email', emailError);
+    }
+
+    return {
+      success: true,
+      transactionRef,
+      paymentId: payment.id,
+      message: 'Payment completed (mock) - ticket reserved',
+    };
+
+  } catch (error) {
+    logError('Mock Payment Error', error);
+    
+    // Log error for debugging
+    await paymentErrors.logPaymentError(supabase, error, {
+      action: 'mockConfirmPayment',
+      bookingId,
+      transactionRef,
+    });
+    
+    return {
+      success: false,
+      error: error.message || 'Mock payment failed',
+    };
+  }
+};
+
+// ============================================================
 // UNIFIED PAYMENT INTERFACE
 // ============================================================
 
 /**
  * Initiate payment based on selected method
+ * 
+ * TODO: When real payment gateway is integrated, set VITE_USE_MOCK_PAYMENTS=false
+ * to disable mock payments and use real payment flows
  */
 export const initiatePayment = async (paymentData) => {
+  // Check if mock payments are enabled
+  if (USE_MOCK_PAYMENTS) {
+    // Bypass all payment gateways and use mock payment
+    return mockConfirmPayment(paymentData);
+  }
+
+  // Real payment gateway flow (bypassed when USE_MOCK_PAYMENTS is true)
   const { paymentMethod } = paymentData;
   const method = PAYMENT_METHODS[paymentMethod.toUpperCase()];
 
@@ -1136,8 +1295,10 @@ export const initiatePayment = async (paymentData) => {
 
   switch (method.provider) {
     case 'dpo':
+      // TODO: Real DPO Pay integration - currently bypassed when USE_MOCK_PAYMENTS=true
       return createDPOPayment(paymentData);
     case 'orange':
+      // TODO: Real Orange Money integration - currently bypassed when USE_MOCK_PAYMENTS=true
       return createOrangeMoneyPayment(paymentData);
     case 'manual':
       return createManualPayment(paymentData);
@@ -1457,6 +1618,9 @@ const paymentService = {
   verifyPayment,
   getPaymentByRef,
   getBookingPayments,
+  
+  // Mock Payment (for development/testing)
+  mockConfirmPayment,
   
   // DPO Pay
   createDPOPayment,

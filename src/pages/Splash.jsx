@@ -12,6 +12,7 @@ const Splash = () => {
   const { user, loading, userProfile } = useAuth();
   const [isNavigating, setIsNavigating] = useState(false);
   const [isEmailVerification, setIsEmailVerification] = useState(false);
+  const [mountedAt] = useState(() => Date.now());
   const hasHandledVerification = useRef(false);
 
   // Parse URL hash parameters safely
@@ -124,14 +125,25 @@ const Splash = () => {
       return;
     }
 
-    // Set up navigation timer
-    const navigationTimer = setTimeout(handleNavigation, SPLASH_DURATION);
+    // Ensure we wait for auth to finish loading before navigating
+    if (loading) {
+      return;
+    }
+
+    // Calculate how long we've already been showing the splash
+    const elapsed = Date.now() - mountedAt;
+    const remaining = Math.max(0, SPLASH_DURATION - elapsed);
+
+    // Set up navigation timer - ensure splash shows for at least SPLASH_DURATION
+    const navigationTimer = setTimeout(() => {
+      handleNavigation();
+    }, remaining);
 
     // Cleanup function
     return () => {
       clearTimeout(navigationTimer);
     };
-  }, [handleNavigation, isEmailVerificationInProgress, isEmailVerification]);
+  }, [handleNavigation, isEmailVerificationInProgress, isEmailVerification, loading, mountedAt]);
 
   // Handle cleanup on unmount
   useEffect(() => {

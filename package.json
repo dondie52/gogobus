@@ -17,6 +17,7 @@
     "test:all": "npm run test && npm run test:e2e"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@sentry/react": "^10.35.0",
     "@supabase/supabase-js": "^2.38.0",
     "jspdf": "^4.0.0",

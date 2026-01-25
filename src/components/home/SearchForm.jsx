@@ -3,6 +3,7 @@ import { routeService } from '../../services/routeService';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { logError } from '../../utils/logger';
 import styles from './SearchForm.module.css';
 
 const SearchForm = ({ onSearch }) => {
@@ -96,9 +97,30 @@ const SearchForm = ({ onSearch }) => {
           onClick={handleSwap}
           className={styles.swapButton}
           aria-label="Swap origin and destination"
+          title="Swap origin and destination"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path 
+              d="M7 16V4M7 4L3 8M7 4L11 8" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            />
+            <path 
+              d="M17 8V20M17 20L21 16M17 20L13 16" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
 

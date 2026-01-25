@@ -4,6 +4,7 @@ import { profileService } from '../services/profileService';
 import { logError } from '../utils/logger';
 import { setUser as setSentryUser, clearUser } from '../utils/sentry';
 import { initTokenRefresh } from '../utils/security';
+import { supabase } from '../services/supabase';
 
 const AuthContext = createContext();
 
@@ -16,6 +17,9 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  // #region agent log
+  fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AuthContext.jsx:18',message:'AuthProvider initializing',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+  // #endregion
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -85,12 +89,8 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    // #region agent log
-    // #endregion
     // Get initial session
     authService.getSession().then((session) => {
-      // #region agent log
-      // #endregion
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -98,8 +98,6 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for auth state changes
     const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
-      // #region agent log
-      // #endregion
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -165,6 +163,10 @@ export const AuthProvider = ({ children }) => {
     return await authService.updatePassword(newPassword);
   };
 
+  const resendVerificationEmail = async (email) => {
+    return await authService.resendVerificationEmail(email);
+  };
+
   const value = {
     user,
     userProfile,
@@ -178,6 +180,7 @@ export const AuthProvider = ({ children }) => {
     verifyOTP,
     resetPassword,
     updatePassword,
+    resendVerificationEmail,
     isAuthenticated: !!user,
     isAdmin: userProfile?.role === 'admin',
     isEmailVerified: !!user?.email_confirmed_at,

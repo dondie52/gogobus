@@ -16,6 +16,8 @@ const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activePromo, setActivePromo] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   // Hero slides with Botswana bus imagery
   const heroSlides = [
@@ -144,8 +146,35 @@ const Home = () => {
     return () => clearInterval(heroTimer);
   }, [heroSlides.length]);
 
+  // Touch handlers for swipe
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      setActivePromo((prev) => (prev + 1) % heroSlides.length);
+    } else if (isRightSwipe) {
+      setActivePromo((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    }
+  };
+
   const handleSearch = (searchData) => {
     // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:175',message:'handleSearch called',data:{origin:searchData.origin,destination:searchData.destination,date:searchData.date,passengers:searchData.passengers},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
     // #endregion
     try {
       const params = new URLSearchParams({
@@ -154,15 +183,23 @@ const Home = () => {
         date: searchData.date,
         passengers: searchData.passengers?.toString() || '1',
       });
-      navigate(`/search?${params.toString()}`);
+      const searchUrl = `/search?${params.toString()}`;
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:185',message:'Navigating to search',data:{searchUrl,paramsString:params.toString()},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
+      navigate(searchUrl);
     } catch (error) {
       // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:189',message:'Error in handleSearch',data:{errorMessage:error?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
       // #endregion
       throw error;
     }
   };
 
   const handleBookNow = (slide) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:193',message:'handleBookNow called',data:{slideTitle:slide.title,slideOrigin:slide.origin,slideDestination:slide.destination},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
+    // #endregion
     // Use origin and destination from slide data, or try to parse from title as fallback
     let origin, destination;
     
@@ -177,11 +214,17 @@ const Home = () => {
         destination = parts[1].trim().charAt(0) + parts[1].trim().slice(1).toLowerCase();
       } else {
         // If we can't parse, don't navigate
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:208',message:'Cannot parse slide title',data:{slideTitle:slide.title},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
+        // #endregion
         return;
       }
     }
     
     const today = new Date().toISOString().split('T')[0];
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Home.jsx:213',message:'Calling handleSearch from handleBookNow',data:{origin,destination,date:today},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'E'})}).catch(()=>{});
+    // #endregion
     handleSearch({
       origin,
       destination,
@@ -298,7 +341,12 @@ const Home = () => {
 
         {/* Hero Banner with Bus Image */}
         <div className={styles.heroSection}>
-          <div className={styles.heroCarousel}>
+          <div 
+            className={styles.heroCarousel}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
             {heroSlides.map((slide, index) => (
               <div
                 key={slide.id}
@@ -440,11 +488,7 @@ const Home = () => {
               </h2>
               <div className={styles.paymentMethods}>
                 <span>Pay via</span>
-                <div className={styles.paymentIcons}>
-                  <span className={styles.paymentIcon}>💳</span>
-                  <span className={styles.paymentIcon}>📱</span>
-                  <span className={styles.paymentIcon}>🏦</span>
-                </div>
+                <span className={styles.paymentText}>visa or cash</span>
               </div>
             </div>
             <SearchForm onSearch={handleSearch} />
@@ -460,12 +504,6 @@ const Home = () => {
               </svg>
               Popular Routes
             </h2>
-            <button className={styles.viewAllBtn} onClick={() => navigate('/routes')}>
-              View All
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
           </div>
           <PopularRoutes onRouteSelect={handleSearch} />
         </section>

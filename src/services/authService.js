@@ -136,6 +136,22 @@ export const authService = {
   },
 
   /**
+   * Resend email verification
+   */
+  async resendVerificationEmail(email) {
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email: email,
+      options: {
+        emailRedirectTo: BASE_URL,
+      },
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
    * Verify OTP
    */
   async verifyOTP(email, token) {

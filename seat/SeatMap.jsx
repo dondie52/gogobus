@@ -102,14 +102,6 @@ const SeatMap = ({
             <div className={styles.windowGlare} />
           </div>
           <div className={styles.frontDetails}>
-            <div className={styles.doorIndicator}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <rect x="3" y="2" width="18" height="20" rx="2" />
-                <path d="M12 2v20" />
-                <circle cx="15" cy="12" r="1" fill="currentColor" />
-              </svg>
-              <span>Entry</span>
-            </div>
             <div className={styles.driverArea}>
               <div className={styles.steeringWheel}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -119,6 +111,14 @@ const SeatMap = ({
                 </svg>
               </div>
               <span className={styles.driverLabel}>Driver</span>
+            </div>
+            <div className={styles.doorIndicator}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="3" y="2" width="18" height="20" rx="2" />
+                <path d="M12 2v20" />
+                <circle cx="15" cy="12" r="1" fill="currentColor" />
+              </svg>
+              <span>Entry</span>
             </div>
           </div>
         </div>

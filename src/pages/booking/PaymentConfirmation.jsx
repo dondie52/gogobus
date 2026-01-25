@@ -197,13 +197,19 @@ export default function PaymentConfirmation() {
         setPayment(paymentData);
         setBooking(paymentData.bookings);
 
+        // For mock payments, immediately show success (no gateway verification needed)
+        if (paymentData.provider === 'mock') {
+          setStatus('success');
+          return;
+        }
+
         // For manual payments (cash/bank transfer), show pending status
         if (['cash', 'bank_transfer'].includes(paymentMethod)) {
           setStatus('pending');
           return;
         }
 
-        // Verify payment with provider
+        // Verify payment with provider (only for real payment gateways)
         const verifyResult = await paymentService.verifyPayment(transactionRef);
         
         if (verifyResult.success) {

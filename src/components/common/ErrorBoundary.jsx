@@ -11,12 +11,14 @@ class ErrorBoundary extends React.Component {
 
   static getDerivedStateFromError(error) {
     // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ErrorBoundary.jsx:12',message:'getDerivedStateFromError called',data:{errorMessage:error?.message,errorName:error?.name,errorStack:error?.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
     // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ErrorBoundary.jsx:18',message:'componentDidCatch called',data:{errorMessage:error?.message,errorName:error?.name,errorStack:error?.stack?.substring(0,1000),componentStack:errorInfo?.componentStack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     // #endregion
     logError('Error caught by boundary', { error, errorInfo });
     
@@ -31,6 +33,7 @@ class ErrorBoundary extends React.Component {
   render() {
     // #region agent log
     if (this.state.hasError) {
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ErrorBoundary.jsx:32',message:'ErrorBoundary rendering error UI',data:{errorMessage:this.state.error?.message,errorName:this.state.error?.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
     }
     // #endregion
     if (this.state.hasError) {

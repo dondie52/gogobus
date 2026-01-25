@@ -48,7 +48,15 @@ const GetStarted = () => {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 100);
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GetStarted.jsx:50',message:'GetStarted component mounted',data:{isLoaded},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'K'})}).catch(()=>{});
+    // #endregion
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GetStarted.jsx:52',message:'GetStarted isLoaded set to true',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'K'})}).catch(()=>{});
+      // #endregion
+    }, 100);
     return () => clearTimeout(timer);
   }, []);
 
@@ -77,6 +85,12 @@ const GetStarted = () => {
     }
   };
 
+  // #region agent log
+  useEffect(() => {
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'GetStarted.jsx:80',message:'GetStarted render',data:{isLoaded,hasLoadedClass:document.querySelector(`.${styles.contentSection}.${styles.loaded}`) !== null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'K'})}).catch(()=>{});
+  }, [isLoaded]);
+  // #endregion
+  
   return (
     <div className={styles.getStartedScreen}>
       {/* Hero Section with Bus Images */}

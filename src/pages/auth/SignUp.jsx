@@ -72,9 +72,9 @@ const SignUp = () => {
         localStorage.setItem('gogobus_signupData', JSON.stringify({ fullName, email, phone }));
         navigate('/complete-profile');
       } else {
-        // Email confirmation required, show verification screen
+        // Email confirmation required, show check email screen
         localStorage.setItem('gogobus_signupData', JSON.stringify({ fullName, email, phone }));
-        navigate('/otp-verification', { state: { email } });
+        navigate('/check-email', { state: { email } });
       }
     } catch (err) {
       setError(err.message || 'Failed to create account. Please try again.');

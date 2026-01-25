@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useSearch } from '../../context/SearchContext';
+import { useBooking } from '../../context/BookingContext';
 import bookingService from '../../services/bookingService';
 import { logError } from '../../utils/logger';
 import styles from './SearchResults.module.css';
@@ -42,6 +44,16 @@ const Icons = {
       <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/>
     </svg>
   ),
+  ChargingPort: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="20" height="10" rx="2" ry="2"/>
+      <line x1="6" y1="11" x2="6" y2="13"/>
+      <line x1="10" y1="11" x2="10" y2="13"/>
+      <line x1="14" y1="11" x2="14" y2="13"/>
+      <line x1="18" y1="11" x2="18" y2="13"/>
+      <path d="M12 2v5M8 2v3M16 2v3"/>
+    </svg>
+  ),
   ChevronRight: () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m9 18 6-6-6-6"/>
@@ -69,21 +81,55 @@ const AmenityIcon = ({ type }) => {
   const icons = {
     wifi: <Icons.Wifi />,
     ac: <Icons.Snowflake />,
+    aircon: <Icons.Snowflake />,
+    'air conditioning': <Icons.Snowflake />,
     power: <Icons.Power />,
+    usb: <Icons.ChargingPort />,
+    charging: <Icons.ChargingPort />,
+    'charging port': <Icons.ChargingPort />,
+    charging_port: <Icons.ChargingPort />,
+    'charging-port': <Icons.ChargingPort />,
   };
-  return icons[type] || null;
+  // Normalize the type to lowercase and trim whitespace for matching
+  const normalizedType = (type || '').toLowerCase().trim();
+  return icons[normalizedType] || null;
+};
+
+// Helper function to check if an amenity has a corresponding icon
+const hasAmenityIcon = (amenity) => {
+  const normalizedType = (amenity || '').toLowerCase().trim();
+  const supportedAmenities = ['wifi', 'ac', 'aircon', 'air conditioning', 'power', 'usb', 'charging', 'charging port', 'charging_port', 'charging-port'];
+  return supportedAmenities.includes(normalizedType);
 };
 
 // ==================== MAIN COMPONENT ====================
 export default function SearchResults() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { searchParams: contextSearchParams } = useSearch();
+  const { setSelectedRoute } = useBooking();
   
-  // Get search params
-  const origin = searchParams.get('from') || '';
-  const destination = searchParams.get('to') || '';
-  const date = searchParams.get('date') || '';
-  const passengers = parseInt(searchParams.get('passengers') || '1');
+  // Parse hash manually for HashRouter compatibility
+  const parseHashParams = () => {
+    try {
+      const hash = window.location.hash;
+      if (hash.includes('?')) {
+        const queryString = hash.split('?')[1];
+        return new URLSearchParams(queryString);
+      }
+    } catch (e) {
+      // Ignore parsing errors
+    }
+    return null;
+  };
+  
+  const hashParams = parseHashParams();
+  
+  // Get search params from hash first (HashRouter), then URLSearchParams, then context
+  const origin = (hashParams?.get('from') || searchParams.get('from') || contextSearchParams.origin || '').trim();
+  const destination = (hashParams?.get('to') || searchParams.get('to') || contextSearchParams.destination || '').trim();
+  const date = (hashParams?.get('date') || searchParams.get('date') || contextSearchParams.date || '').trim();
+  const passengers = parseInt(hashParams?.get('passengers') || searchParams.get('passengers') || '1');
 
   // State
   const [trips, setTrips] = useState([]);
@@ -96,7 +142,7 @@ export default function SearchResults() {
   useEffect(() => {
     const fetchTrips = async () => {
       if (!origin || !destination || !date) {
-        setError('Invalid search parameters');
+        setError('Invalid search parameters. Please go back and try your search again.');
         setLoading(false);
         return;
       }
@@ -171,14 +217,21 @@ export default function SearchResults() {
 
   // Handle trip selection
   const handleSelectTrip = (trip) => {
-    // #region agent log
-    // #endregion
-    // #region agent log
-    // #endregion
+    // Set the selected route in BookingContext before navigating
+    setSelectedRoute({
+      id: trip.id,
+      origin,
+      destination,
+      date,
+      price: trip.price,
+      departure_time: trip.departure_time,
+      arrival_time: trip.arrival_time,
+      bus: trip.buses,
+      route: trip.routes,
+      available_seats: trip.available_seats,
+    });
     // Navigate to seat selection with trip ID
     navigate(`/booking/seats/${trip.id}?passengers=${passengers}`);
-    // #region agent log
-    // #endregion
   };
 
   // Get unique bus types for filter
@@ -257,7 +310,7 @@ export default function SearchResults() {
             <Icons.AlertCircle />
             <h2>Oops! Something went wrong</h2>
             <p>{error}</p>
-            <button onClick={() => navigate('/')}>Back to Search</button>
+            <button onClick={() => navigate('/home')}>Back to Search</button>
           </div>
         ) : sortedTrips.length === 0 ? (
           <div className={styles.empty}>
@@ -267,7 +320,7 @@ export default function SearchResults() {
               No buses available from {origin} to {destination} on {formatDate(date)}.
               Try a different date or route.
             </p>
-            <button onClick={() => navigate('/')}>Search Again</button>
+            <button onClick={() => navigate('/home')}>Search Again</button>
           </div>
         ) : (
           <div className={styles.tripsList}>
@@ -317,11 +370,23 @@ export default function SearchResults() {
                     </div>
                     {trip.buses?.amenities && trip.buses.amenities.length > 0 && (
                       <div className={styles.amenities}>
-                        {trip.buses.amenities.map(amenity => (
-                          <span key={amenity} className={styles.amenity} title={amenity}>
-                            <AmenityIcon type={amenity} />
-                          </span>
-                        ))}
+                        {trip.buses.amenities
+                          .filter(amenity => {
+                            // Only show amenities that have corresponding icons
+                            // This ensures charging port icons are only shown when the amenity exists in the data
+                            return amenity && hasAmenityIcon(amenity);
+                          })
+                          .map(amenity => {
+                            const icon = <AmenityIcon type={amenity} />;
+                            // Only render if icon exists (double-check for safety)
+                            return icon ? (
+                              <span key={amenity} className={styles.amenity} title={amenity}>
+                                {icon}
+                              </span>
+                            ) : null;
+                          })
+                          .filter(Boolean) // Remove any null entries
+                        }
                       </div>
                     )}
                   </div>

@@ -7,6 +7,9 @@ const STORAGE_KEY_PREFIX = 'gogobus_rate_limit_';
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
 
+// Disable rate limiting in development mode
+const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
+
 /**
  * Get rate limit key for a specific identifier (email, IP, etc.)
  * @param {string} identifier - Unique identifier (usually email)
@@ -65,6 +68,12 @@ const clearRateLimitData = (identifier) => {
  * @returns {object} - { limited: boolean, remainingAttempts: number, lockoutUntil?: number }
  */
 export const checkRateLimit = (identifier) => {
+  // Disable rate limiting in development mode and clear any existing lockouts
+  if (isDevelopment) {
+    clearRateLimitData(identifier);
+    return { limited: false, remainingAttempts: MAX_ATTEMPTS };
+  }
+  
   const data = getRateLimitData(identifier);
   
   if (!data) {
@@ -118,6 +127,11 @@ export const checkRateLimit = (identifier) => {
  * @param {string} identifier - Unique identifier
  */
 export const recordFailedAttempt = (identifier) => {
+  // Don't record failed attempts in development mode
+  if (isDevelopment) {
+    return;
+  }
+  
   const data = getRateLimitData(identifier) || { attempts: 0 };
   data.attempts = (data.attempts || 0) + 1;
   data.lastAttempt = Date.now();
@@ -155,3 +169,30 @@ export const getLockoutTimeRemaining = (identifier) => {
   
   return Math.ceil((data.lockoutUntil - now) / 60000);
 };
+
+/**
+ * Clear all rate limit data (useful for development/testing)
+ * @param {string} identifier - Optional identifier to clear, or clear all if not provided
+ */
+export const clearAllRateLimits = (identifier) => {
+  if (identifier) {
+    clearRateLimitData(identifier);
+  } else {
+    // Clear all rate limit entries
+    try {
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith(STORAGE_KEY_PREFIX)) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (error) {
+      // Ignore errors
+    }
+  }
+};
+
+// Expose clear function globally in development for easy access
+if (isDevelopment && typeof window !== 'undefined') {
+  window.clearRateLimit = clearAllRateLimits;
+}

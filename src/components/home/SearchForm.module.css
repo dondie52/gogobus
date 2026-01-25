@@ -74,11 +74,38 @@
   transition: all 0.2s ease;
   flex-shrink: 0;
   margin-bottom: 0.5rem;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.swapButton svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  color: inherit;
+  flex-shrink: 0;
 }
 
 .swapButton:hover {
   background: #e0951a;
   transform: rotate(180deg);
+}
+
+.swapButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.3);
+}
+
+.swapButton:active {
+  transform: scale(0.95) rotate(180deg);
+  background: #d08515;
+}
+
+.swapButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .searchButton {
@@ -109,4 +136,17 @@
   background-color: #2a2a2a;
   border-color: #444;
   color: #e0e0e0;
+}
+
+:global(.dark-mode) .swapButton {
+  background: #F5A623;
+  color: white;
+}
+
+:global(.dark-mode) .swapButton:hover {
+  background: #e0951a;
+}
+
+:global(.dark-mode) .swapButton:active {
+  background: #d08515;
 }

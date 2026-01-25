@@ -260,6 +260,9 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .heroSlide {
@@ -412,8 +415,11 @@
 .heroIndicators {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
   margin-top: 12px;
+  position: relative;
+  z-index: 10;
 }
 
 .heroIndicator {
@@ -424,12 +430,50 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  padding: 0;
+  padding: 12px;
+  position: relative;
+  flex-shrink: 0;
+  /* Larger touch target for better mobile interaction */
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
 }
 
-.heroIndicator.activeIndicator {
+.heroIndicator::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: #CBD5E1;
+  transition: all 0.3s ease;
+}
+
+.heroIndicator.activeIndicator::after {
   width: 24px;
   background: #1B4D4A;
+}
+
+.heroIndicator:hover::after {
+  background: #94A3B8;
+  opacity: 0.8;
+}
+
+.heroIndicator.activeIndicator:hover::after {
+  background: #153D3A;
+}
+
+.heroIndicator:active {
+  transform: scale(0.9);
+}
+
+.heroIndicator:focus {
+  outline: 2px solid #1B4D4A;
+  outline-offset: 2px;
+  border-radius: 8px;
 }
 
 /* Search Section */
@@ -480,6 +524,13 @@
   font-size: 0.7rem;
   color: #64748B;
   font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.paymentText {
+  font-size: 0.7rem;
+  color: #64748B;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
 }
 
 .paymentIcons {
@@ -994,12 +1045,20 @@
   color: #94A3B8;
 }
 
-:global(.dark-mode) .heroIndicator {
+:global(.dark-mode) .heroIndicator::after {
   background: #334155;
 }
 
-:global(.dark-mode) .heroIndicator.activeIndicator {
+:global(.dark-mode) .heroIndicator.activeIndicator::after {
   background: #F5A623;
+}
+
+:global(.dark-mode) .heroIndicator:hover::after {
+  background: #475569;
+}
+
+:global(.dark-mode) .heroIndicator.activeIndicator:hover::after {
+  background: #E8941F;
 }
 
 /* Responsive */

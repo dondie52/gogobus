@@ -12,7 +12,7 @@ import styles from './Auth.module.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, signInWithProvider } = useAuth();
+  const { login, signInWithProvider, resendVerificationEmail } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +22,9 @@ const Login = () => {
   const [focusedField, setFocusedField] = useState(null);
   const [rememberMe, setRememberMe] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [showVerificationError, setShowVerificationError] = useState(false);
+  const [resendingEmail, setResendingEmail] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -122,18 +125,31 @@ const Login = () => {
     } catch (err) {
       let errorMessage = 'Login failed. Please check your credentials.';
       
-      // Check error status/code first (more reliable than string matching)
+      // Check error status/code and message
       const errorStatus = err.status || err.code;
       const errorMessageLower = err.message?.toLowerCase() || '';
       
-      if (errorStatus === 400 || errorMessageLower.includes('email not confirmed') || errorMessageLower.includes('not confirmed')) {
+      // Only show email verification error if explicitly mentioned in the error message
+      // Don't treat all 400 errors as verification errors since email verification is disabled
+      if (errorMessageLower.includes('email not confirmed') || 
+          errorMessageLower.includes('email_not_confirmed') ||
+          (errorMessageLower.includes('not confirmed') && errorMessageLower.includes('email'))) {
         errorMessage = 'Please verify your email address before logging in.';
-      } else if (errorStatus === 401 || errorMessageLower.includes('invalid') || errorMessageLower.includes('invalid_credentials')) {
+        setShowVerificationError(true);
+      } else if (errorStatus === 401 || 
+                 errorStatus === 400 || 
+                 errorMessageLower.includes('invalid') || 
+                 errorMessageLower.includes('invalid_credentials') ||
+                 errorMessageLower.includes('invalid login')) {
+        setShowVerificationError(false);
         errorMessage = 'Invalid email or password.';
       } else if (err.message) {
         errorMessage = err.message;
       }
       setError(errorMessage);
+      if (!showVerificationError) {
+        setShowVerificationError(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -144,6 +160,27 @@ const Login = () => {
       await signInWithProvider(provider);
     } catch (error) {
       setError(`${provider} login failed. Please try again.`);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email || !validateEmail(email)) {
+      setError('Please enter a valid email address first.');
+      return;
+    }
+
+    setResendingEmail(true);
+    setError('');
+    setResendSuccess(false);
+
+    try {
+      await resendVerificationEmail(email);
+      setResendSuccess(true);
+      setTimeout(() => setResendSuccess(false), 5000);
+    } catch (err) {
+      setError(err.message || 'Failed to resend verification email. Please try again.');
+    } finally {
+      setResendingEmail(false);
     }
   };
 
@@ -213,6 +250,52 @@ const Login = () => {
                 <path d="M12 8V12M12 16H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
               {error}
+              {showVerificationError && (
+                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={resendingEmail || resendSuccess}
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid #F5A623',
+                      color: '#F5A623',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      cursor: resendingEmail || resendSuccess ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      width: '100%',
+                      opacity: resendingEmail || resendSuccess ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {resendingEmail ? (
+                      <>
+                        <LoadingSpinner size="small" />
+                        <span>Sending...</span>
+                      </>
+                    ) : resendSuccess ? (
+                      <>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M20 6L9 17L4 12" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>Email sent! Check your inbox.</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" strokeWidth="2"/>
+                          <path d="M2 7L12 13L22 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <span>Resend verification email</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
