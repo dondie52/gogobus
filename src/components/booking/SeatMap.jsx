@@ -155,7 +155,13 @@ const SeatMap = ({
                 role="row"
                 aria-label={`Row ${rowNumber}${isEmergencyRow ? ', emergency exit row' : ''}`}
               >
-                <span className={styles.rowLabel}>{rowNumber}</span>
+                <span 
+                  className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''}`}
+                  title={isEmergencyRow ? 'Emergency exit' : undefined}
+                  data-tooltip={isEmergencyRow ? 'Emergency exit' : undefined}
+                >
+                  {rowNumber}
+                </span>
                 
                 <div className={styles.leftSection}>
                   {leftOuterSeats.map((seat) => (
@@ -219,7 +225,13 @@ const SeatMap = ({
                   ))}
                 </div>
 
-                <span className={styles.rowLabel}>{rowNumber}</span>
+                <span 
+                  className={`${styles.rowLabel} ${isEmergencyRow ? styles.emergencyRowLabel : ''}`}
+                  title={isEmergencyRow ? 'Emergency exit' : undefined}
+                  data-tooltip={isEmergencyRow ? 'Emergency exit' : undefined}
+                >
+                  {rowNumber}
+                </span>
               </div>
             );
           })}
