@@ -1104,23 +1104,19 @@
   }
 
   .quickActions {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 10px;
-    padding-bottom: 0.5rem;
-  }
-
-  .quickActions::-webkit-scrollbar {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    overflow: visible;
   }
 
   .quickActionBtn {
-    flex-shrink: 0;
-    min-width: 85px;
-    scroll-snap-align: start;
+    min-width: 0;
+    padding: 12px 6px;
+  }
+
+  .quickActionBtn span {
+    font-size: 0.65rem;
   }
 
   .partnersGrid {

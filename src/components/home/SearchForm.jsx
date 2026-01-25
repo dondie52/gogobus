@@ -156,13 +156,36 @@ const SearchForm = ({ onSearch }) => {
 
         <div className={styles.passengersInput}>
           <label className={styles.label}>Passengers</label>
-          <Input
-            type="number"
-            value={passengers}
-            onChange={(e) => setPassengers(Math.max(1, parseInt(e.target.value) || 1))}
-            min="1"
-            required
-          />
+          <div className={styles.passengerInputWrapper}>
+            <button
+              type="button"
+              className={styles.passengerButton}
+              onClick={() => setPassengers(Math.max(1, passengers - 1))}
+              aria-label="Decrease passengers"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <Input
+              type="number"
+              value={passengers}
+              onChange={(e) => setPassengers(Math.max(1, parseInt(e.target.value) || 1))}
+              min="1"
+              required
+              className={styles.passengerInput}
+            />
+            <button
+              type="button"
+              className={styles.passengerButton}
+              onClick={() => setPassengers(passengers + 1)}
+              aria-label="Increase passengers"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

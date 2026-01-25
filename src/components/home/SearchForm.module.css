@@ -123,6 +123,71 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
+.passengerInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+/* Ensure input wrapper doesn't add extra margin */
+.passengerInputWrapper > * {
+  margin: 0;
+}
+
+/* Center align number input and hide spinners */
+.passengerInputWrapper input[type="number"] {
+  text-align: center;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.passengerInputWrapper input[type="number"]::-webkit-inner-spin-button,
+.passengerInputWrapper input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.passengerButton {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #1B4D4A;
+  background: #1B4D4A;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.passengerButton:hover {
+  background: #153D3A;
+  border-color: #153D3A;
+}
+
+.passengerButton:active {
+  transform: scale(0.95);
+}
+
+.passengerButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(27, 77, 74, 0.3);
+}
+
+.passengerInput {
+  flex: 1;
+}
+
+@media (max-width: 480px) {
+  .passengerButton {
+    display: flex;
+  }
+}
+
 /* Dark mode */
 :global(.dark-mode) .searchForm {
   background: #2a2a2a;
