@@ -518,7 +518,6 @@
 @media (prefers-reduced-motion: reduce) {
   .windowGlare,
   .steeringWheel,
-  .emergencyBadge,
   .selectionSummary,
   .seatChip {
     animation: none !important;
