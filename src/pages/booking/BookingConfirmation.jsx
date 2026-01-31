@@ -1,25 +1,82 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBooking } from '../../context/BookingContext';
 import { trackBookingCompleted } from '../../utils/analytics';
 import Button from '../../components/common/Button';
 import QRCodeDisplay from '../../components/booking/QRCodeDisplay';
 import { logInfo } from '../../utils/logger';
 import emailService from '../../services/emailService';
+import paymentService from '../../services/paymentService';
 import styles from './Booking.module.css';
 
 const BookingConfirmation = () => {
   const navigate = useNavigate();
-  const { booking, selectedRoute, selectedSeats, passengerDetails, clearBooking } = useBooking();
+  const [searchParams] = useSearchParams();
+  const { booking, selectedRoute, selectedSeats, passengerDetails, clearBooking, setBooking } = useBooking();
   const [isLoaded, setIsLoaded] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState('details');
+  const [isLoadingBooking, setIsLoadingBooking] = useState(false);
+
+  // #region agent log
+  useEffect(() => {
+    const transactionRef = searchParams.get('ref');
+    const currentPath = typeof window !== 'undefined' ? (window.location.hash || window.location.pathname) : 'unknown';
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:18',message:'BookingConfirmation mounted',data:{hasBooking:!!booking,bookingId:booking?.id,transactionRef,hasSelectedRoute:!!selectedRoute,selectedSeatsCount:selectedSeats?.length,currentPath},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  }, []);
+  // #endregion
 
   useEffect(() => {
+    // #region agent log
+    const transactionRef = searchParams.get('ref');
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:24',message:'BookingConfirmation useEffect - checking booking',data:{hasBooking:!!booking,bookingId:booking?.id,transactionRef,willRedirect:!booking,willLoadFromRef:!booking && !!transactionRef},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    
+    // If no booking in context, try to load from transaction reference
     if (!booking) {
-      navigate('/home');
-      return;
+      const transactionRef = searchParams.get('ref');
+      if (transactionRef) {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:29',message:'Loading booking from transaction ref',data:{transactionRef},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        setIsLoadingBooking(true);
+        paymentService.getPaymentByRef(transactionRef)
+          .then(({ data: paymentData, error: fetchError }) => {
+            // #region agent log
+            const bookingData = Array.isArray(paymentData?.bookings) ? paymentData.bookings[0] : paymentData?.bookings;
+            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:33',message:'Payment data fetched',data:{hasPaymentData:!!paymentData,hasBooking:!!bookingData,bookingId:bookingData?.id,isArray:Array.isArray(paymentData?.bookings),error:fetchError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            if (fetchError || !paymentData || !bookingData) {
+              // #region agent log
+              fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:36',message:'Failed to load booking - redirecting to home',data:{error:fetchError?.message,hasPaymentData:!!paymentData,hasBooking:!!bookingData,bookingsType:typeof paymentData?.bookings},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+              // #endregion
+              setIsLoadingBooking(false);
+              navigate('/home');
+              return;
+            }
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:41',message:'Setting booking from payment data',data:{bookingId:bookingData.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
+            setBooking(bookingData);
+            setIsLoadingBooking(false);
+          })
+          .catch((err) => {
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:46',message:'Error loading booking - redirecting to home',data:{errorMessage:err?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+            // #endregion
+            logInfo('Error loading booking from transaction ref', err);
+            navigate('/home');
+            return;
+          });
+        return;
+      } else {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingConfirmation.jsx:53',message:'No booking and no transaction ref - redirecting to home',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+        navigate('/home');
+        return;
+      }
     }
     
     // Track booking completion conversion
@@ -66,7 +123,7 @@ const BookingConfirmation = () => {
       clearTimeout(timer);
       clearTimeout(confettiTimer);
     };
-  }, [booking, navigate, selectedRoute, selectedSeats, passengerDetails]);
+  }, [booking, navigate, selectedRoute, selectedSeats, passengerDetails, searchParams, setBooking]);
 
   const handleGoHome = () => {
     clearBooking();
@@ -112,6 +169,17 @@ const BookingConfirmation = () => {
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.start?.replace(/-/g, '')}/${event.start?.replace(/-/g, '')}&details=${encodeURIComponent(event.details)}`;
     window.open(googleCalendarUrl, '_blank');
   };
+
+  // Show loading state while fetching booking
+  if (isLoadingBooking) {
+    return (
+      <div className={styles.bookingScreen}>
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <p>Loading booking confirmation...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!booking) {
     return null;
