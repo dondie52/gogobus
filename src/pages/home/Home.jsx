@@ -392,7 +392,12 @@ const Home = () => {
                     </div>
                     <button 
                       className={styles.heroBookBtn}
-                      onClick={() => handleBookNow(slide)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleBookNow(slide);
+                      }}
+                      type="button"
                     >
                       Book Now
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

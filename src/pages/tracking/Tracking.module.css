@@ -1,0 +1,390 @@
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #F7F7F7;
+  position: relative;
+  overflow: hidden;
+}
+
+.loadingScreen,
+.errorScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #1B4D4A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingScreen p {
+  font-size: 1rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.errorIcon {
+  font-size: 4rem;
+}
+
+.errorScreen h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.errorScreen p {
+  font-size: 1rem;
+  color: #666;
+  text-align: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.backButton {
+  padding: 0.75rem 1.5rem;
+  background: #1B4D4A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background 0.2s ease;
+}
+
+.backButton:hover {
+  background: #0f3a37;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  position: relative;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #333;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backBtn:hover {
+  color: #1B4D4A;
+}
+
+.headerTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  flex: 1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.mapArea {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 50vh;
+  transition: max-height 0.3s ease;
+  z-index: 200;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet.expanded {
+  max-height: 85vh;
+}
+
+.sheetHandle {
+  width: 100%;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.handleBar {
+  width: 40px;
+  height: 4px;
+  background: #ccc;
+  border-radius: 2px;
+}
+
+.sheetContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  padding-top: 0;
+}
+
+.routeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.routePoint {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.routeDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.routeDot.origin {
+  background: #4CAF50;
+}
+
+.routeDot.destination {
+  background: #F44336;
+}
+
+.routeLabel {
+  font-size: 0.75rem;
+  color: #666;
+  display: block;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.routeValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: block;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.routeLine {
+  width: 2px;
+  height: 20px;
+  background: #e0e0e0;
+  margin-left: 5px;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.detailValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #E8F5E9;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: #4CAF50;
+  font-weight: 500;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  background: #4CAF50;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.adminPanel {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #FFF3E0;
+  border-radius: 12px;
+  border: 1px solid #FFB74D;
+}
+
+.adminHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #FF9800;
+  font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.adminContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.simButton {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.simButton.startBtn {
+  background: #4CAF50;
+  color: white;
+}
+
+.simButton.startBtn:hover {
+  background: #45a049;
+}
+
+.simButton.stopBtn {
+  background: #F44336;
+  color: white;
+}
+
+.simButton.stopBtn:hover {
+  background: #da190b;
+}
+
+.adminNote {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Dark mode */
+:global(.dark-mode) .container {
+  background: #1a1a1a;
+}
+
+:global(.dark-mode) .header {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .backBtn {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .headerTitle {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .sheet {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .handleBar {
+  background: #666;
+}
+
+:global(.dark-mode) .routeLabel,
+:global(.dark-mode) .detailLabel {
+  color: #999;
+}
+
+:global(.dark-mode) .routeValue,
+:global(.dark-mode) .detailValue {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .routeLine {
+  background: #444;
+}
+
+:global(.dark-mode) .routeInfo {
+  border-bottom-color: #444;
+}
+
+:global(.dark-mode) .liveIndicator {
+  background: rgba(76, 175, 80, 0.2);
+  color: #81C784;
+}
+
+:global(.dark-mode) .adminPanel {
+  background: rgba(255, 152, 0, 0.1);
+  border-color: #FF9800;
+}
+
+:global(.dark-mode) .adminHeader {
+  color: #FFB74D;
+}
+
+:global(.dark-mode) .adminNote {
+  color: #999;
+}

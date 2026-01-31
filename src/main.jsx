@@ -5,6 +5,7 @@ import { initAnalytics } from './utils/analytics';
 import { runProductionChecks, logProductionReadiness } from './utils/production';
 import App from './App';
 import './styles/global.css';
+import 'leaflet/dist/leaflet.css';
 
 // #region agent log
 fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'main.jsx:9',message:'Starting app initialization',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});

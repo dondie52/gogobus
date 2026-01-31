@@ -1,0 +1,160 @@
+/**
+ * ROUTER UPDATES FOR GOGOBUS
+ * 
+ * Add these changes to your existing router configuration.
+ * Typically located in: src/App.jsx or src/router.jsx
+ */
+
+// ============================================
+// 1. IMPORT THE NEW TRACKING PAGE
+// ============================================
+import Tracking from './pages/tracking/Tracking';
+
+// ============================================
+// 2. IMPORT TRACKING CONTEXT (OPTIONAL)
+// ============================================
+import { TrackingProvider } from './context/TrackingContext';
+
+// ============================================
+// 3. ADD ROUTE TO YOUR ROUTER
+// ============================================
+
+/*
+Add this route inside your <Routes> component:
+
+<Route
+  path="/tracking/:routeId"
+  element={
+    <ProtectedRoute>
+      <Tracking />
+    </ProtectedRoute>
+  }
+/>
+
+FULL EXAMPLE (adjust to match your existing structure):
+*/
+
+// Example router structure:
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+// ... other imports
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* ... existing routes ... */}
+      
+      {/* Live Tracking Route */}
+      <Route
+        path="/tracking/:routeId"
+        element={
+          <ProtectedRoute>
+            <Tracking />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* ... other routes ... */}
+    </Routes>
+  );
+}
+
+// ============================================
+// 4. WRAP APP WITH TRACKING PROVIDER (OPTIONAL)
+// ============================================
+
+/*
+If you want to use the TrackingContext across your app,
+wrap your providers like this:
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <TrackingProvider>
+          <AppRoutes />
+        </TrackingProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+*/
+
+// ============================================
+// EXAMPLE: COMPLETE App.jsx STRUCTURE
+// ============================================
+
+/*
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Context providers
+import { AuthProvider } from './context/AuthContext';
+import { TrackingProvider } from './context/TrackingContext';
+
+// Route guards
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
+
+// Pages
+import Home from './pages/Home';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import TicketView from './pages/tickets/TicketView';
+import Tracking from './pages/tracking/Tracking';
+// ... other page imports
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <TrackingProvider>
+          <Routes>
+            {/* Public routes *}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Protected routes *}
+            <Route
+              path="/tickets/:ticketId"
+              element={
+                <ProtectedRoute>
+                  <TicketView />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Live Tracking - NEW ROUTE *}
+            <Route
+              path="/tracking/:routeId"
+              element={
+                <ProtectedRoute>
+                  <Tracking />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin routes *}
+            <Route
+              path="/admin/*"
+              element={
+                <AdminProtectedRoute>
+                  {/* Admin components *}
+                </AdminProtectedRoute>
+              }
+            />
+
+            {/* 404 *}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </TrackingProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+*/
+
+export {};

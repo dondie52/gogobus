@@ -6,6 +6,7 @@ import Button from '../../components/common/Button';
 import QRCodeDisplay from '../../components/booking/QRCodeDisplay';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import TicketDownload from '../../components/tickets/TicketDownload';
+import LiveTrackingCard from '../../components/tracking/LiveTrackingCard';
 import { logError } from '../../utils/logger';
 import styles from './TicketView.module.css';
 
@@ -183,6 +184,17 @@ const TicketView = () => {
             route={route}
             seats={booking.seats}
           />
+
+          {/* Live Tracking Card */}
+          {route?.id && (
+            <div className={styles.trackingSection}>
+              <LiveTrackingCard
+                routeId={route.id}
+                trip={booking.schedule}
+                bookingId={booking.id}
+              />
+            </div>
+          )}
 
           {ticketBookingData && (
             <div className={styles.ticketDownloadSection}>

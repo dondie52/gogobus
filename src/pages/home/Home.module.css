@@ -379,6 +379,9 @@
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .heroSchedule {
@@ -405,6 +408,11 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(245, 166, 35, 0.4);
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .heroBookBtn:hover {

@@ -284,11 +284,30 @@ const SignUp = () => {
 
           {/* Terms Agreement */}
           <div className={styles.termsCheckbox}>
-            <label className={styles.checkboxLabel}>
+            <label 
+              className={styles.checkboxLabel}
+              onClick={(e) => {
+                // Don't toggle if clicking on links
+                if (e.target.tagName === 'A') {
+                  return;
+                }
+                // Don't toggle if clicking directly on the input (it handles its own onChange)
+                if (e.target.type === 'checkbox') {
+                  return;
+                }
+                // Toggle checkbox when clicking anywhere else on the label
+                e.preventDefault();
+                e.stopPropagation();
+                setAgreedToTerms(!agreedToTerms);
+              }}
+            >
               <input 
                 type="checkbox" 
                 checked={agreedToTerms}
                 onChange={(e) => setAgreedToTerms(e.target.checked)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
               />
               <span className={styles.checkmark}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
@@ -296,7 +315,7 @@ const SignUp = () => {
                 </svg>
               </span>
               <span className={styles.termsText}>
-                I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>
+                I agree to the <a href="/terms" onClick={(e) => e.stopPropagation()}>Terms of Service</a> and <a href="/privacy" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>
               </span>
             </label>
           </div>

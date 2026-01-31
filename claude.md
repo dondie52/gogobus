@@ -51,8 +51,8 @@ GOGOBUS is a mobile-first bus booking application designed for travelers in Bots
 - **React 18** - UI library
 - **React Router v6** - Navigation and routing
 - **CSS Modules** - Scoped styling
-- **Vite** - Build tool and dev server
-- **Supabase** - Backend as a Service (Auth, Database, Storage)
+- **Vite 5.0** - Build tool and dev server
+- **Supabase** - Backend as a Service (Auth, Database, Storage, Edge Functions)
 
 ### Fonts
 - **Plus Jakarta Sans** - Primary font family (weights: 400, 500, 600, 700, 800)
@@ -61,9 +61,29 @@ GOGOBUS is a mobile-first bus booking application designed for travelers in Bots
 - **react-icons** - Icon library (react-icons v4.12.0)
 - Custom SVG icons (inline) - Used where needed
 
+### AI & Chat
+- **@google/generative-ai** - Google Generative AI for chat assistance
+- **AI Chat Service** - Intelligent customer support chat
+
+### Monitoring & Analytics
+- **@sentry/react** - Error tracking and monitoring
+- **Google Analytics 4** - User analytics and tracking
+- **Performance Monitoring** - Core Web Vitals tracking
+
+### PDF Generation
+- **jspdf** - PDF generation for ticket downloads
+
+### QR Codes
+- **qrcode** - QR code generation for digital tickets
+
+### Testing
+- **Vitest** - Unit testing framework
+- **Playwright** - End-to-end testing
+- **@testing-library/react** - React component testing utilities
+
 ### Build Tools
 - **Vite 5.0** - Build tool and dev server
-- ESLint - Code linting
+- **ESLint** - Code linting
 
 ---
 
@@ -262,7 +282,7 @@ gogobus/
 │   │   ├── SearchContext.jsx
 │   │   └── ThemeContext.jsx
 │   ├── hooks/
-│   │   (Empty - custom hooks can be added here)
+│   │   └── usePaymentStatus.js
 │   ├── pages/
 │   │   ├── admin/
 │   │   │   ├── AdminDashboard.jsx
@@ -329,8 +349,12 @@ gogobus/
 │   │   └── Splash.module.css
 │   ├── services/
 │   │   ├── adminService.js
+│   │   ├── aiChatService.js
 │   │   ├── authService.js
 │   │   ├── bookingService.js
+│   │   ├── chatAIService.js
+│   │   ├── chatService.js
+│   │   ├── emailService.js
 │   │   ├── paymentService.js
 │   │   ├── profileService.js
 │   │   ├── routeService.js
@@ -339,7 +363,19 @@ gogobus/
 │   ├── styles/
 │   │   └── global.css
 │   ├── utils/
-│   │   └── pricing.js
+│   │   ├── analytics.js
+│   │   ├── apiLogger.js
+│   │   ├── constants.js
+│   │   ├── logger.js
+│   │   ├── paymentErrors.js
+│   │   ├── performance.js
+│   │   ├── pricing.js
+│   │   ├── production.js
+│   │   ├── rateLimiter.js
+│   │   ├── security.js
+│   │   ├── sentry.js
+│   │   ├── validation.js
+│   │   └── xss.js
 │   ├── App.jsx
 │   └── main.jsx
 ├── scripts/
@@ -365,6 +401,14 @@ gogobus/
 ├── vite.config.js
 ├── package.json
 ├── package-lock.json
+├── supabase/
+│   ├── config.toml
+│   └── functions/
+│       ├── ai-chat-handler/
+│       ├── chat-ai/
+│       ├── payment-webhook-dpo/
+│       ├── payment-webhook-orange/
+│       └── send-booking-email/
 ├── supabase-config.js
 ├── index.html
 ├── index2.html
@@ -586,6 +630,20 @@ gogobus/
 - Formats: PDF, PNG, JPEG
 - Includes QR code and ticket details
 
+### Chat Components
+
+#### LiveChatWidget
+```jsx
+<LiveChatWidget />
+```
+- Features: Floating chat widget with AI-powered support
+- Drag-and-drop positioning on mobile
+- Real-time message updates via Supabase subscriptions
+- AI chat integration with Google Generative AI
+- Human escalation support
+- Unread message count indicator
+- Mobile-optimized with swipe gestures
+
 ### Layout Components
 
 #### AppLayout
@@ -709,6 +767,7 @@ gogobus/
    - Contact information (phone, email, live chat)
    - Frequently asked questions (FAQs)
    - Support hours and availability
+   - Integrated LiveChatWidget for instant support
 
 ### Partner
 1. **BecomePartner** - Partner registration page
@@ -785,6 +844,43 @@ The Home page includes quick action buttons that navigate to:
 - Protected routes require authentication via `ProtectedRoute` component
 - Admin routes require authentication AND admin role via `AdminProtectedRoute` component
 - Admin users are automatically redirected to `/admin` after login
+
+---
+
+## 🪝 Custom Hooks
+
+### usePaymentStatus
+```jsx
+const {
+  status,        // Payment status: 'pending' | 'completed' | 'failed' | 'cancelled'
+  payment,       // Payment object
+  error,         // Error message if any
+  isPolling,     // Boolean: true if currently polling
+  isCompleted,   // Boolean: true if payment completed
+  isFailed,      // Boolean: true if payment failed
+  isCancelled,   // Boolean: true if payment cancelled
+  isPending,     // Boolean: true if payment pending
+} = usePaymentStatus(transactionRef, provider, enabled, pollInterval, maxDuration);
+```
+
+**Usage:**
+```jsx
+import { usePaymentStatus } from '../hooks/usePaymentStatus';
+
+const PaymentStatus = ({ transactionRef, provider }) => {
+  const { status, isPolling, error } = usePaymentStatus(transactionRef, provider);
+  
+  if (isPolling) return <div>Verifying payment...</div>;
+  if (error) return <div>Error: {error}</div>;
+  return <div>Status: {status}</div>;
+};
+```
+
+**Features:**
+- Automatic polling for mobile money payments (Orange Money, DPO Pay)
+- Configurable polling interval and max duration
+- Automatic cleanup on unmount
+- Supports Orange Money dedicated polling function
 
 ---
 
@@ -905,6 +1001,27 @@ profileService.updateProfile(userId, data)
 profileService.uploadAvatar(userId, file)
 ```
 
+### chatService
+```javascript
+chatService.getConversation(userId)
+chatService.sendMessage(conversationId, message)
+chatService.getMessages(conversationId)
+chatService.escalateToHuman(conversationId)
+```
+
+### chatAIService / aiChatService
+```javascript
+chatAIService.sendMessage(message, conversationHistory)
+chatAIService.getAIResponse(userMessage, context)
+```
+
+### emailService
+```javascript
+emailService.sendBookingConfirmation(bookingId)
+emailService.sendPasswordReset(email, resetToken)
+emailService.sendWelcomeEmail(userId)
+```
+
 ### Admin Features
 - **Role-Based Access Control**: Users have a `role` field in `profiles` table (`'user'` or `'admin'`)
 - **Admin Route Protection**: `AdminProtectedRoute` component checks for admin role before allowing access
@@ -916,6 +1033,220 @@ profileService.uploadAvatar(userId, file)
 // Supabase client configuration and initialization
 // Exports configured Supabase client instance
 ```
+
+### Supabase Edge Functions
+
+The project includes several Supabase Edge Functions for backend processing:
+
+#### ai-chat-handler
+- Handles AI chat requests
+- Integrates with Google Generative AI
+- Processes chat messages and generates responses
+
+#### chat-ai
+- Alternative AI chat handler
+- Processes conversational AI interactions
+
+#### payment-webhook-dpo
+- Handles DPO Pay webhook callbacks
+- Processes payment status updates
+- Updates booking and payment records
+
+#### payment-webhook-orange
+- Handles Orange Money webhook callbacks
+- Processes mobile money payment confirmations
+- Updates transaction status
+
+#### send-booking-email
+- Sends booking confirmation emails
+- Generates and sends ticket emails
+- Handles email delivery via Supabase
+
+---
+
+## 🛠 Utilities
+
+### Security Utilities
+
+#### xss.js
+```javascript
+import { sanitizeInput, sanitizeHTML, escapeHTML } from '../utils/xss';
+
+sanitizeInput(userInput)      // Sanitize user input
+sanitizeHTML(htmlString)      // Sanitize HTML content
+escapeHTML(text)              // Escape HTML entities
+```
+- Comprehensive XSS prevention utilities
+- Input sanitization for all user inputs
+- HTML escaping and validation
+
+#### security.js
+```javascript
+import { 
+  refreshToken, 
+  checkPermission, 
+  auditSecurity 
+} from '../utils/security';
+
+refreshToken()                // Refresh JWT token
+checkPermission(user, action) // Check user permissions
+auditSecurity(event)          // Security audit logging
+```
+- JWT token refresh with automatic rotation
+- Permission checking utilities
+- Security audit logging
+
+#### rateLimiter.js
+```javascript
+import { rateLimit, checkRateLimit } from '../utils/rateLimiter';
+
+rateLimit(key, maxAttempts, windowMs)  // Rate limit function
+checkRateLimit(identifier)            // Check if rate limited
+```
+- Client-side rate limiting
+- Account lockout after failed attempts
+- Configurable rate limits
+
+### Performance & Monitoring
+
+#### performance.js
+```javascript
+import { 
+  trackWebVitals, 
+  measurePerformance, 
+  trackAPITiming 
+} from '../utils/performance';
+
+trackWebVitals()              // Track Core Web Vitals (LCP, FID, CLS)
+measurePerformance(name)     // Measure custom performance metrics
+trackAPITiming(endpoint, time) // Track API response times
+```
+- Core Web Vitals tracking (LCP, FID, CLS)
+- Performance monitoring utilities
+- API response time tracking
+
+#### analytics.js
+```javascript
+import { 
+  trackEvent, 
+  trackPageView, 
+  trackConversion 
+} from '../utils/analytics';
+
+trackEvent(eventName, params)  // Track custom events
+trackPageView(path)            // Track page views
+trackConversion(type, value)   // Track conversions
+```
+- Google Analytics 4 integration
+- Event tracking utilities
+- Conversion tracking
+
+#### sentry.js
+```javascript
+import { 
+  initSentry, 
+  captureException, 
+  captureMessage 
+} from '../utils/sentry';
+
+initSentry()                  // Initialize Sentry
+captureException(error)       // Capture exceptions
+captureMessage(message)       // Capture messages
+```
+- Sentry error tracking integration
+- Exception and error logging
+- Production error monitoring
+
+#### logger.js
+```javascript
+import { 
+  logInfo, 
+  logError, 
+  logWarning, 
+  logDebug 
+} from '../utils/logger';
+
+logInfo(message, data)         // Log info messages
+logError(message, error)      // Log errors
+logWarning(message, data)     // Log warnings
+logDebug(message, data)        // Log debug messages
+```
+- Comprehensive logging utilities
+- Structured logging with context
+- Production-safe logging
+
+#### apiLogger.js
+```javascript
+import { logAPIRequest, logAPIResponse } from '../utils/apiLogger';
+
+logAPIRequest(endpoint, method, data)  // Log API requests
+logAPIResponse(endpoint, response)     // Log API responses
+```
+- API request/response logging
+- Request tracking and monitoring
+
+### Validation & Error Handling
+
+#### validation.js
+```javascript
+import { 
+  validateEmail, 
+  validatePhone, 
+  validateBooking 
+} from '../utils/validation';
+
+validateEmail(email)          // Validate email format
+validatePhone(phone)           // Validate phone number
+validateBooking(bookingData)   // Validate booking data
+```
+- Comprehensive input validation
+- Email, phone, date, amount validation
+- Booking input validation
+
+#### paymentErrors.js
+```javascript
+import { 
+  getPaymentErrorMessage, 
+  handlePaymentError 
+} from '../utils/paymentErrors';
+
+getPaymentErrorMessage(error) // Get user-friendly error message
+handlePaymentError(error)      // Handle payment errors
+```
+- Payment error handling utilities
+- User-friendly error messages
+- Payment error recovery
+
+### Production & Constants
+
+#### production.js
+```javascript
+import { 
+  isProduction, 
+  validateProduction, 
+  checkProductionReady 
+} from '../utils/production';
+
+isProduction()                 // Check if in production
+validateProduction()           // Validate production environment
+checkProductionReady()         // Check production readiness
+```
+- Production environment validation
+- Production readiness checks
+- Environment configuration validation
+
+#### constants.js
+```javascript
+import { 
+  PAYMENT_POLL_INTERVAL, 
+  PAYMENT_POLL_MAX_DURATION,
+  RATE_LIMIT_CONFIG 
+} from '../utils/constants';
+```
+- Application-wide constants
+- Configuration values
+- Payment polling intervals
+- Rate limiting configuration
 
 ---
 
@@ -1202,6 +1533,22 @@ npm run lint
 |         |        | - Added paymentService and ticketService |
 |         |        | - Added adminService for admin operations |
 |         |        | - Updated documentation with complete file structure |
+| 1.5.0 | 2025-01 | Security, Performance & AI Chat Features |
+|         |        | - Added comprehensive security utilities (XSS prevention, rate limiting, JWT refresh) |
+|         |        | - Implemented performance monitoring (Core Web Vitals, API timing) |
+|         |        | - Added Sentry error tracking integration |
+|         |        | - Added Google Analytics 4 integration |
+|         |        | - Implemented AI-powered live chat widget (LiveChatWidget) |
+|         |        | - Added chat services (chatService, chatAIService, aiChatService) |
+|         |        | - Added email service for booking confirmations and notifications |
+|         |        | - Created Supabase Edge Functions (AI chat, payment webhooks, email) |
+|         |        | - Added usePaymentStatus hook for real-time payment polling |
+|         |        | - Added comprehensive utility modules (validation, logger, analytics, etc.) |
+|         |        | - Added production utilities and readiness checks |
+|         |        | - Implemented comprehensive testing (Vitest, Playwright, Testing Library) |
+|         |        | - Added PDF generation support (jspdf) for ticket downloads |
+|         |        | - Enhanced payment error handling and recovery |
+|         |        | - Added API logging and monitoring utilities |
 
 ---
 
@@ -1215,7 +1562,7 @@ npm run lint
 
 ---
 
-*Last updated: January 2025*
+*Last updated: January 2025 (v1.5.0)*
 
 ---
 
@@ -1331,4 +1678,4 @@ For a comprehensive MVP analysis including:
 
 ---
 
-*Last updated: January 2025* 
+*Last updated: January 2025 (v1.5.0)* 

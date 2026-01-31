@@ -1,0 +1,121 @@
+.mapContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.busMarker {
+  background: transparent;
+  border: none;
+}
+
+.busIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 48px;
+  transition: transform 0.3s ease;
+}
+
+.busIconWrapper svg {
+  width: 100%;
+  height: 100%;
+}
+
+.originMarker,
+.destinationMarker {
+  background: transparent;
+  border: none;
+}
+
+.markerPin {
+  width: 30px;
+  height: 40px;
+  border-radius: 50% 50% 50% 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transform: rotate(-45deg);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.markerPin span {
+  transform: rotate(45deg);
+}
+
+.markerPin.origin {
+  background: #4CAF50;
+}
+
+.markerPin.destination {
+  background: #F44336;
+}
+
+.busPopup {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.busPopup strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.busPopup span {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.noLocationOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: 12px;
+}
+
+.noLocationContent {
+  text-align: center;
+  padding: 2rem;
+}
+
+.noLocationIcon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.noLocationContent p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Dark mode */
+:global(.dark-mode) .noLocationOverlay {
+  background: rgba(26, 26, 26, 0.9);
+}
+
+:global(.dark-mode) .noLocationContent p {
+  color: #999;
+}

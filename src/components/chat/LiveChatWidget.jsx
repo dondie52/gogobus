@@ -25,6 +25,10 @@ const LiveChatWidget = () => {
   const messagesListRef = useRef(null);
   const buttonRef = useRef(null);
   const widgetRef = useRef(null);
+  const chatWindowRef = useRef(null);
+  const touchStartY = useRef(0);
+  const touchStartTime = useRef(0);
+  const [swipeOffset, setSwipeOffset] = useState(0);
 
   // Scroll to bottom of messages
   const scrollToBottom = useCallback(() => {
@@ -310,6 +314,7 @@ const LiveChatWidget = () => {
 
   // Toggle chat open/close
   const toggleChat = () => {
+    console.log('toggleChat called, current isOpen:', isOpen);
     setIsOpen(!isOpen);
     setError(null);
     if (!isOpen) {
@@ -468,6 +473,19 @@ const LiveChatWidget = () => {
 
   return (
     <div ref={widgetRef} className={styles.chatWidget}>
+      {/* Backdrop overlay for mobile */}
+      {isOpen && (
+        <div 
+          className={styles.chatBackdrop}
+          onClick={toggleChat}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            toggleChat();
+          }}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Slide-in button when minimized */}
       {!isButtonVisible && !isOpen && (
         <button
@@ -482,7 +500,40 @@ const LiveChatWidget = () => {
       )}
 
       {/* Chat Window */}
-      <div className={`${styles.chatWindow} ${isOpen ? styles.open : ''}`}>
+      <div 
+        ref={chatWindowRef}
+        className={`${styles.chatWindow} ${isOpen ? styles.open : ''}`}
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => {
+          touchStartY.current = e.touches[0].clientY;
+          touchStartTime.current = Date.now();
+        }}
+        onTouchMove={(e) => {
+          // Allow swipe down to close on mobile
+          const touchY = e.touches[0].clientY;
+          const deltaY = touchY - touchStartY.current;
+          if (deltaY > 0) {
+            // Swiping down - add visual feedback
+            setSwipeOffset(Math.min(deltaY, 150));
+          }
+        }}
+        onTouchEnd={(e) => {
+          e.stopPropagation();
+          const touchY = e.changedTouches[0].clientY;
+          const deltaY = touchY - touchStartY.current;
+          const deltaTime = Date.now() - touchStartTime.current;
+          
+          // If swiped down more than 100px or fast swipe down, close
+          if (deltaY > 100 || (deltaY > 50 && deltaTime < 300)) {
+            setSwipeOffset(0);
+            toggleChat();
+          } else {
+            // Reset transform
+            setSwipeOffset(0);
+          }
+        }}
+        style={swipeOffset > 0 ? { transform: `translateY(${swipeOffset}px)` } : undefined}
+      >
         {/* Header */}
         <div className={styles.chatHeader}>
           <div className={styles.headerInfo}>
@@ -507,8 +558,33 @@ const LiveChatWidget = () => {
               </span>
             </div>
           </div>
-          <button className={styles.closeButton} onClick={toggleChat} aria-label="Close chat">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button 
+            className={styles.closeButton} 
+            onClick={(e) => {
+              console.log('Close button clicked (onClick)');
+              e.preventDefault();
+              e.stopPropagation();
+              toggleChat();
+            }}
+            onTouchStart={(e) => {
+              console.log('Close button touch start');
+              e.stopPropagation();
+            }}
+            onTouchEnd={(e) => {
+              console.log('Close button touch end');
+              e.preventDefault();
+              e.stopPropagation();
+              toggleChat();
+            }}
+            onMouseDown={(e) => {
+              console.log('Close button mouse down');
+              e.stopPropagation();
+            }}
+            aria-label="Close chat"
+            type="button"
+          >
+            <span className={styles.closeButtonText}>Close</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>

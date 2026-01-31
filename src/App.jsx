@@ -87,6 +87,7 @@ const PaymentConfirmation = safeLazy(() => import('./pages/booking/PaymentConfir
 const BookingConfirmation = safeLazy(() => import('./pages/booking/BookingConfirmation'), 'BookingConfirmation');
 const MyTickets = safeLazy(() => import('./pages/tickets/MyTickets'), 'MyTickets');
 const TicketView = safeLazy(() => import('./pages/tickets/TicketView'), 'TicketView');
+const Tracking = safeLazy(() => import('./pages/tracking/Tracking'), 'Tracking');
 const Profile = safeLazy(() => import('./pages/profile/Profile'), 'Profile');
 const Help = safeLazy(() => import('./pages/help/Help'), 'Help');
 const Notifications = safeLazy(() => import('./pages/notifications/Notifications'), 'Notifications');
@@ -368,6 +369,14 @@ function App() {
                     element={
                       <ProtectedRoute>
                         <TicketView />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/tracking/:routeId"
+                    element={
+                      <ProtectedRoute>
+                        <Tracking />
                       </ProtectedRoute>
                     }
                   />

@@ -383,7 +383,7 @@
   display: none;
 }
 
-.checkmark {
+.checkboxLabel .checkmark {
   width: 20px;
   height: 20px;
   border: 2px solid #CBD5E1;
@@ -393,6 +393,10 @@
   justify-content: center;
   transition: all 0.3s ease;
   color: transparent;
+  flex-shrink: 0;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
 }
 
 .rememberMe input:checked + .checkmark {
@@ -417,6 +421,9 @@
 /* Terms Checkbox */
 .termsCheckbox {
   margin-top: -8px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .checkboxLabel {
@@ -424,10 +431,41 @@
   align-items: flex-start;
   gap: 10px;
   cursor: pointer;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.checkboxLabel input:checked + .checkmark {
+  background: #1B4D4A;
+  border-color: #1B4D4A;
+  color: white;
+}
+
+.checkboxLabel input:focus {
+  outline: 2px solid #1B4D4A;
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .checkboxLabel input {
-  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 2;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .termsText {
@@ -435,12 +473,18 @@
   color: #64748B;
   line-height: 1.5;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .termsText a {
   color: #1B4D4A;
   text-decoration: underline;
   font-weight: 600;
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
 }
 
 .termsText a:hover {

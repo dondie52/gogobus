@@ -1,0 +1,231 @@
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.headerIcon {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.headerTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  flex: 1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.loadingState,
+.errorState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1B4D4A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorIcon,
+.emptyIcon {
+  font-size: 3rem;
+}
+
+.errorState p {
+  color: #dc2626;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background: #1B4D4A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background 0.2s ease;
+}
+
+.retryButton:hover {
+  background: #0f3a37;
+}
+
+.emptyText {
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.emptySubtext {
+  font-size: 0.875rem;
+  color: #999;
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.infoRow:last-child {
+  border-bottom: none;
+}
+
+.infoLabel {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.infoValue {
+  font-size: 0.875rem;
+  color: #1A1A1A;
+  font-weight: 600;
+  text-align: right;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.lastUpdated {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  font-size: 0.75rem;
+  color: #999;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.updateDot {
+  width: 8px;
+  height: 8px;
+  background: #4CAF50;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.mapButton {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  background: #1B4D4A;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all 0.2s ease;
+}
+
+.mapButton:hover {
+  background: #0f3a37;
+  transform: translateY(-1px);
+}
+
+.mapButtonIcon {
+  font-size: 1.25rem;
+}
+
+.mapButtonArrow {
+  margin-left: auto;
+  font-size: 1.25rem;
+}
+
+/* Dark mode */
+:global(.dark-mode) .card {
+  background: #2a2a2a;
+}
+
+:global(.dark-mode) .header {
+  border-bottom-color: #444;
+}
+
+:global(.dark-mode) .headerTitle {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .infoLabel {
+  color: #999;
+}
+
+:global(.dark-mode) .infoValue {
+  color: #e0e0e0;
+}
+
+:global(.dark-mode) .lastUpdated {
+  color: #999;
+  border-top-color: #444;
+}
+
+:global(.dark-mode) .infoRow {
+  border-bottom-color: #444;
+}
+
+:global(.dark-mode) .emptyText {
+  color: #999;
+}
+
+:global(.dark-mode) .emptySubtext {
+  color: #666;
+}
