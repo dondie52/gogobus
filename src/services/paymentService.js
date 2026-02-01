@@ -1352,9 +1352,20 @@ export const getPaymentByRef = async (transactionRef) => {
         id,
         booking_reference,
         passenger_name,
-        trips (
+        origin,
+        destination,
+        departure_time,
+        seats,
+        total_amount,
+        payment_status,
+        status,
+        schedule:schedules (
           departure_time,
-          routes (origin, destination)
+          arrival_time,
+          route:routes (
+            origin,
+            destination
+          )
         )
       )
     `)
