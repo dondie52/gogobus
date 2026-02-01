@@ -9,22 +9,42 @@ const BookingSummary = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { selectedRoute, selectedSeats, passengerDetails } = useBooking();
+  // #region agent log
+  React.useEffect(() => {
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:11',message:'BookingSummary render - context data check',data:{hasSelectedRoute:!!selectedRoute,selectedRouteId:selectedRoute?.id,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length,currentPath:location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+  }, [selectedRoute, selectedSeats, passengerDetails, location.pathname]);
+  // #endregion
 
   const handleContinue = () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:13',message:'handleContinue called',data:{hasSelectedRoute:!!selectedRoute,selectedRouteId:selectedRoute?.id,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length,currentPath:location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     console.log('Continue to Payment clicked', {
       selectedRoute,
       selectedSeats,
       passengerDetails
     });
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:19',message:'About to navigate to /booking/payment',data:{targetPath:'/booking/payment',currentPath:location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
     navigate('/booking/payment');
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:20',message:'navigate call completed',data:{targetPath:'/booking/payment'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
   };
 
   if (!selectedRoute || !selectedSeats || selectedSeats.length === 0) {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:22',message:'Redirecting due to missing route/seats',data:{hasSelectedRoute:!!selectedRoute,selectedSeatsCount:selectedSeats?.length,redirectTarget:'/booking/seat-selection'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
     navigate('/booking/seat-selection');
     return null;
   }
 
   if (!passengerDetails || passengerDetails.length === 0 || passengerDetails.length !== selectedSeats.length) {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'BookingSummary.jsx:27',message:'Redirecting due to missing passenger details',data:{passengerDetailsCount:passengerDetails?.length,selectedSeatsCount:selectedSeats?.length,redirectTarget:'/booking/passenger-details'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
     navigate('/booking/passenger-details');
     return null;
   }

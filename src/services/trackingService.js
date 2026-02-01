@@ -198,6 +198,16 @@ export async function checkTrackingAccess(tripId, userId) {
 }
 
 /**
+ * Subscribe to real-time location updates for a route (alias for trip)
+ * @param {string} routeId - UUID of the route/trip to track
+ * @param {Function} onUpdate - Callback function receiving location updates
+ * @returns {Function} Cleanup function to unsubscribe
+ */
+export function subscribeToRouteLocation(routeId, onUpdate) {
+  return subscribeToTripLocation(routeId, onUpdate);
+}
+
+/**
  * Simulate bus movement along a route (DEV/ADMIN ONLY)
  * @param {string} tripId - UUID of the trip
  * @param {Object} options - Simulation options

@@ -116,6 +116,16 @@ export default function Payment() {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { booking, selectedRoute, selectedSeats, passengerDetails } = useBooking();
+  // #region agent log
+  useEffect(() => {
+    try {
+      const currentPath = typeof window !== 'undefined' ? (window.location.hash || window.location.pathname) : 'unknown';
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:114',message:'Payment component mounted',data:{hasUser:!!user,userId:user?.id,hasSelectedRoute:!!selectedRoute,selectedRouteId:selectedRoute?.id,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length,currentPath},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    } catch (err) {
+      // Silently fail logging
+    }
+  }, []);
+  // #endregion
 
   const [selectedMethod, setSelectedMethod] = useState('card');
   const [loading, setLoading] = useState(false);
@@ -147,22 +157,32 @@ export default function Payment() {
 
   // Update price when payment method changes
   const updatePriceBreakdown = (methodId) => {
-    const breakdown = paymentService.calculateTotal(
-      bookingData.basePrice,
-      bookingData.serviceFee,
-      methodId
-    );
-    setPriceBreakdown(breakdown);
+    try {
+      const breakdown = paymentService.calculateTotal(
+        bookingData.basePrice || 0,
+        bookingData.serviceFee || 0,
+        methodId || 'card'
+      );
+      setPriceBreakdown(breakdown);
+    } catch (error) {
+      logError('Error calculating price breakdown', error);
+      setPriceBreakdown(null);
+    }
   };
 
   // Load payment methods and calculate fees
   useEffect(() => {
-    const methods = paymentService.getEnabledPaymentMethods();
-    setPaymentMethods(methods);
-    
-    // Calculate initial price with default method
-    if (bookingData.basePrice && bookingData.serviceFee) {
-      updatePriceBreakdown('card');
+    try {
+      const methods = paymentService.getEnabledPaymentMethods();
+      setPaymentMethods(methods || []);
+      
+      // Calculate initial price with default method
+      if (bookingData.basePrice && bookingData.serviceFee) {
+        updatePriceBreakdown('card');
+      }
+    } catch (error) {
+      logError('Error loading payment methods', error);
+      setPaymentMethods([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingData.basePrice, bookingData.serviceFee]);
@@ -174,15 +194,22 @@ export default function Payment() {
   };
 
   const handlePayment = async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:191',message:'handlePayment called',data:{hasBooking:!!booking,bookingId:booking?.id,hasSelectedRoute:!!selectedRoute,selectedRouteId:selectedRoute?.id,hasUser:!!user,userId:user?.id,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length,selectedMethod,hasPriceBreakdown:!!priceBreakdown,priceBreakdownTotal:priceBreakdown?.total},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+    // #endregion
     setLoading(true);
     setError(null);
 
     try {
       // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:195',message:'handlePayment - starting payment process',data:{loading:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
       // #endregion
 
       // Create booking first if it doesn't exist
       let bookingId = booking?.id;
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:203',message:'Checking if booking needs to be created',data:{hasBooking:!!booking,bookingId:booking?.id,hasSelectedRoute:!!selectedRoute,selectedRouteId:selectedRoute?.id,hasUser:!!user,userId:user?.id,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length,willCreateBooking:!bookingId && !!selectedRoute?.id && !!user?.id && selectedSeats?.length > 0 && passengerDetails?.length > 0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
       if (!bookingId && selectedRoute?.id && user?.id && selectedSeats?.length > 0 && passengerDetails?.length > 0) {
         // #region agent log
         fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:186',message:'Creating booking - before validation',data:{hasPriceBreakdown:!!priceBreakdown,priceBreakdownTotal:priceBreakdown?.total,priceBreakdownBase:priceBreakdown?.baseAmount,priceBreakdownService:priceBreakdown?.serviceFee,priceBreakdownPayment:priceBreakdown?.paymentFee,selectedRouteId:selectedRoute?.id,userId:user?.id,seatsCount:selectedSeats?.length,passengersCount:passengerDetails?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'L'})}).catch(()=>{});
@@ -242,8 +269,15 @@ export default function Payment() {
       }
 
       if (!bookingId) {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:263',message:'No bookingId - throwing error',data:{hasBooking:!!booking,hasSelectedRoute:!!selectedRoute,hasUser:!!user,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+        // #endregion
         throw new Error('Unable to create booking. Please try again.');
       }
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:265',message:'Booking ID confirmed - proceeding to payment',data:{bookingId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
 
       const passenger = bookingData.passenger || passengerDetails?.[0] || {};
       const finalAmount = priceBreakdown?.total || (bookingData.basePrice || totalBasePrice) + (bookingData.serviceFee || serviceFee);
@@ -258,17 +292,28 @@ export default function Payment() {
       };
 
       // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:275',message:'About to initiate payment',data:{bookingId,amount:finalAmount,paymentMethod:selectedMethod,hasPaymentData:!!paymentData},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
       // #endregion
 
       const result = await paymentService.initiatePayment(paymentData);
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:278',message:'Payment initiated - result received',data:{success:result?.success,hasTransactionRef:!!result?.transactionRef,hasPaymentUrl:!!result?.paymentUrl,error:result?.error,USE_MOCK_PAYMENTS},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
 
       if (!result.success) {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:280',message:'Payment failed - result.success is false',data:{error:result?.error},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+        // #endregion
         throw new Error(result.error);
       }
 
       // When mock payments are enabled, always navigate to confirmation
       // Real payment gateway flows are bypassed
       if (USE_MOCK_PAYMENTS) {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:286',message:'Mock payment - navigating to confirmation',data:{transactionRef:result.transactionRef,method:selectedMethod,targetPath:`/booking/confirmation?ref=${result.transactionRef}&method=${selectedMethod}`},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+        // #endregion
         // Mock payment flow - navigate directly to confirmation
         navigate(`/booking/confirmation?ref=${result.transactionRef}&method=${selectedMethod}`);
       } else {
@@ -288,34 +333,63 @@ export default function Payment() {
       }
 
     } catch (err) {
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:305',message:'Payment error caught',data:{errorMessage:err?.message,errorName:err?.name,errorStack:err?.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
       logError('Payment error', err);
       setError(err.message || 'Payment failed. Please try again.');
     } finally {
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:310',message:'handlePayment finally block - setting loading to false',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
       setLoading(false);
     }
   };
 
   const formatCurrency = (amount) => `P${amount.toFixed(2)}`;
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-BW', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleString('en-BW', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      return dateString;
+    }
   };
 
   // Redirect if no route/seats selected - but allow some time for context to update
   useEffect(() => {
+    // #region agent log
+    try {
+      const currentPath = typeof window !== 'undefined' ? (window.location.hash || window.location.pathname) : 'unknown';
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:310',message:'Payment useEffect - checking context data',data:{hasSelectedRoute:!!selectedRoute,selectedRouteId:selectedRoute?.id,selectedSeatsCount:selectedSeats?.length,passengerDetailsCount:passengerDetails?.length,currentPath},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    } catch (err) {
+      // Silently fail logging
+    }
+    // #endregion
     if (!selectedRoute || !selectedSeats || selectedSeats.length === 0) {
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:312',message:'Payment redirecting - missing data',data:{hasSelectedRoute:!!selectedRoute,selectedSeatsCount:selectedSeats?.length,redirectTarget:'/booking/summary'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
       // Small delay to allow context to update if navigating from summary
       const timer = setTimeout(() => {
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:315',message:'Payment executing redirect to summary',data:{redirectTarget:'/booking/summary'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+        // #endregion
         navigate('/booking/summary');
       }, 500);
       return () => clearTimeout(timer);
+    } else {
+      // #region agent log
+      fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:318',message:'Payment has valid data - no redirect',data:{hasSelectedRoute:!!selectedRoute,selectedSeatsCount:selectedSeats?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
     }
-  }, [selectedRoute, selectedSeats, navigate]);
+  }, [selectedRoute, selectedSeats, navigate, passengerDetails]);
 
   // Show loading state while checking data or redirecting
   if (!selectedRoute || !selectedSeats || selectedSeats.length === 0) {
@@ -481,7 +555,14 @@ export default function Payment() {
         {/* Pay Button */}
         <button
           className={styles.payButton}
-          onClick={handlePayment}
+          onClick={(e) => {
+            // #region agent log
+            fetch('http://127.0.0.1:7244/ingest/c4c33fba-1ee4-4b2f-aa1a-ed506c7c702f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Payment.jsx:515',message:'Pay button clicked',data:{loading,disabled:loading,hasHandlePayment:!!handlePayment,priceBreakdownTotal:priceBreakdown?.total},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+            // #endregion
+            if (!loading) {
+              handlePayment();
+            }
+          }}
           disabled={loading}
         >
           {loading ? (
